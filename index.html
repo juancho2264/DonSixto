@@ -3,26 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Talabartería artesanal en Argentina. Descubre cinturones, billeteras y accesorios de cuero genuino hechos a mano. Calidad que dura toda una vida.">
     <title>Don Sixto Talabartería - Prototipo Funcional</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Merriweather for titles, Inter for body text -->
+    <!-- Fuentes de Google: Merriweather para títulos, Inter para el cuerpo de texto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@400;700;900&display.swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
+        /* --- GENERAL STYLES AND ANIMATIONS --- */
         /* --- ESTILOS GENERALES Y ANIMACIONES --- */
         html { scroll-behavior: smooth; }
+
+        /* Animation for elements that appear on scroll */
+        /* Animación para elementos que aparecen con el scroll */
         .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Style for the header when scrolling */
+        /* Estilo para el encabezado al hacer scroll */
         .header-scrolled { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        
+        /* Gradient overlay for the hero section */
+        /* Superposición de gradiente para la sección principal (hero) */
         .hero-gradient::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); z-index: 1; }
+        
+        /* Styles for the side panels (menu and cart) */
+        /* Estilos para los paneles laterales (menú y carrito) */
         .side-panel { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); z-index: 60; }
         .side-panel.open { transform: translateX(0); }
         .panel-backdrop { transition: opacity 0.4s ease-in-out; z-index: 55; }
+        
+        /* Styles for page transitions in the SPA */
+        /* Estilos para las transiciones de página en la SPA */
         .page { transition: opacity 0.5s ease-in-out, visibility 0.5s; }
         .page.hidden { opacity: 0; visibility: hidden; position: absolute; top: 0; left: 0; right: 0; width: 100%;}
+        
+        /* Active thumbnail style in product detail */
+        /* Estilo para la miniatura activa en el detalle del producto */
         .thumbnail-active { border-color: #4E342E; }
-        /* Estilo para la notificación */
+
+        /* "Added to cart" notification style */
+        /* Estilo para la notificación de "Añadido al carrito" */
         #notification {
             transition: opacity 0.5s, transform 0.5s;
             transform: translateY(100%);
@@ -33,8 +63,35 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        /* --- ACCESSIBILITY AND MICROINTERACTIONS --- */
+        /* --- ACCESIBILIDAD Y MICROINTERACCIONES --- */
+        /* Custom focus style for keyboard navigation */
+        /* Estilo de foco personalizado para navegación con teclado */
+        button:focus-visible, a:focus-visible {
+            outline: 2px solid #BF9A6A;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        /* Click effect for buttons */
+        /* Efecto de clic para los botones */
+        button:active, a:active {
+            transform: scale(0.98);
+        }
+        /* Jiggle animation for the cart icon */
+        /* Animación de "sacudida" para el ícono del carrito */
+        @keyframes jiggle {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px) rotate(-2deg); }
+            75% { transform: translateX(3px) rotate(2deg); }
+        }
+        .jiggle {
+            animation: jiggle 0.4s ease-in-out;
+        }
     </style>
     <script>
+        // Tailwind CSS configuration
+        // Configuración de Tailwind CSS
         tailwind.config = {
             theme: {
                 extend: {
@@ -47,11 +104,12 @@
 </head>
 <body class="bg-brand-beige font-sans text-brand-text">
 
-    <!-- ===== HEADER GLOBAL ===== -->
+    <!-- ===== GLOBAL HEADER ===== -->
+    <!-- ===== ENCABEZADO GLOBAL ===== -->
     <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="header">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-24 text-white" id="header-content">
-                <button class="font-serif text-3xl font-bold transition-transform duration-300 hover:scale-105 z-20 nav-link" data-page="home">Don Sixto</button>
+                <a href="#" class="font-serif text-3xl font-bold transition-transform duration-300 hover:scale-105 z-20 nav-link">Don Sixto</a>
                 <div class="flex items-center space-x-5 z-20">
                     <button id="search-button" class="hover:scale-110 transition-transform" aria-label="Buscar"><i data-lucide="search" class="w-6 h-6"></i></button>
                     <button id="cart-button" class="relative hover:scale-110 transition-transform" aria-label="Carrito de compras">
@@ -64,18 +122,23 @@
         </div>
     </header>
 
+    <!-- ===== SIDE PANELS ===== -->
     <!-- ===== PANELES LATERALES ===== -->
     <div id="panel-backdrop" class="panel-backdrop fixed inset-0 bg-black/50 hidden opacity-0"></div>
 
+    <!-- Menu Panel -->
+    <!-- Panel de Menú -->
     <div id="menu-panel" class="side-panel fixed top-0 right-0 h-full w-80 bg-brand-brown text-white shadow-2xl p-8 flex flex-col">
         <button id="close-menu-button" class="self-end mb-8" aria-label="Cerrar menú"><i data-lucide="x" class="w-8 h-8"></i></button>
         <nav class="flex flex-col items-start space-y-8">
-            <button class="nav-link text-3xl font-serif hover:text-brand-accent transition-colors" data-page="shop">Tienda</button>
-            <a href="#nosotros" class="nav-link text-3xl font-serif hover:text-brand-accent transition-colors" data-page="home">Nosotros</a>
-            <a href="#contacto" class="nav-link text-3xl font-serif hover:text-brand-accent transition-colors" data-page="home">Contacto</a>
+            <a href="#shop" class="nav-link text-3xl font-serif hover:text-brand-accent transition-colors">Tienda</a>
+            <a href="#nosotros" class="nav-link text-3xl font-serif hover:text-brand-accent transition-colors">Nosotros</a>
+            <a href="#contacto" class="nav-link text-3xl font-serif hover:text-brand-accent transition-colors">Contacto</a>
         </nav>
     </div>
     
+    <!-- Cart Panel -->
+    <!-- Panel del Carrito -->
     <div id="cart-panel" class="side-panel fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
         <div class="flex justify-between items-center p-6 border-b">
             <h2 class="text-2xl font-serif font-bold text-brand-brown">Mi Carrito</h2>
@@ -91,103 +154,182 @@
         </div>
     </div>
     
-    <!-- ===== CONTENEDOR DE VISTAS (PÁGINAS) ===== -->
+    <!-- ===== PAGE CONTAINER (for SPA behavior) ===== -->
+    <!-- ===== CONTENEDOR DE PÁGINAS (para comportamiento SPA) ===== -->
     <div id="page-container" class="relative">
-        <!-- PÁGINA DE INICIO (HOME) -->
+        <!-- HOME PAGE -->
+        <!-- PÁGINA DE INICIO -->
         <main id="page-home" class="page">
+            <!-- Hero Section -->
+            <!-- Sección Principal (Hero) -->
             <section class="h-screen bg-brand-brown flex flex-col items-center justify-center text-white relative hero-gradient">
-                <div class="absolute inset-0"><img src="https://carterasjarts.com/wp-content/uploads/2024/05/DALL%C2%B7E-2024-05-03-10.52.58-A-display-of-finished-leather-products-in-a-small-Oaxacan-boutique-showcasing-the-variety-of-goods-produced-from-local-craftsmanship.-The-boutique-fe.webp" alt="Taller de talabartería" class="w-full h-full object-cover opacity-40"></div>
+                <div class="absolute inset-0"><img src="https://carterasjarts.com/wp-content/uploads/2024/05/DALL%C2%B7E-2024-05-03-10.52.58-A-display-of-finished-leather-products-in-a-small-Oaxacan-boutique-showcasing-the-variety-of-goods-produced-from-local-craftsmanship.-The-boutique-fe.webp" alt="Taller de talabartería artesanal con productos de cuero en exhibición" class="w-full h-full object-cover opacity-40"></div>
                 <div class="relative z-10 text-center px-4">
-                    <h1 class="text-5xl md:text-8xl font-serif font-black" style="text-shadow: 0px 3px 6px rgba(0,0,0,0.5);">El Arte del Cuero</h1>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-200">Piezas únicas que cuentan una historia.</p>
+                    <h1 class="text-5xl md:text-8xl font-serif font-black" style="text-shadow: 0px 3px 6px rgba(0,0,0,0.5);">Tu Estilo, Tu Legado.</h1>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-200">En un mundo de accesorios genéricos, nuestras piezas de cuero forjadas a mano son una declaración de individualidad y calidad que dura para siempre.</p>
+                    <a href="#shop" class="mt-8 inline-block bg-brand-accent text-white font-bold py-4 px-10 rounded-lg text-lg transition-transform hover:scale-105 transition-shadow hover:shadow-lg">Descubrir la Colección</a>
                 </div>
                 <a href="#destacados" class="absolute bottom-10 animate-bounce z-10" aria-label="Ver productos destacados"><i data-lucide="arrow-down" class="w-8 h-8 text-white"></i></a>
             </section>
             
+            <!-- Featured Products Section -->
+            <!-- Sección de Productos Destacados -->
             <section id="destacados" class="py-20 lg:py-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16 reveal"><h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Nuestros Productos Insignia</h2></div>
-                    
+                    <div class="text-center mb-16 reveal"><h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Insignias de Nuestra Talabartería Artesanal</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-start mb-20">
-                        
                         <div class="flex flex-col items-center text-center reveal">
-                            <img src="https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png" alt="Cinturón de cuero" class="rounded-lg shadow-2xl mb-6">
+                            <div class="relative">
+                                <img loading="lazy" src="https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png" alt="Cinturón de cuero genuino hecho a mano con hebilla de bronce" class="rounded-lg shadow-2xl mb-6">
+                                <span class="absolute top-4 right-4 bg-brand-accent text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg">Más Vendido</span>
+                            </div>
                             <h3 class="text-2xl font-serif font-bold text-brand-brown">Hecho para Durar</h3>
                             <p class="mt-2 text-gray-600">Cada cinturón es cortado y cosido a mano, utilizando solo cuero de plena flor.</p>
-                            <button class="nav-link mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition" data-page="shop">Ver más</button>
+                            <a href="#shop" class="mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition">Ver más</a>
                         </div>
-                        
                         <div class="flex flex-col items-center text-center reveal">
-                            <img src="https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg" alt="Billetera de cuero" class="rounded-lg shadow-2xl mb-6">
+                            <img loading="lazy" src="https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg" alt="Billetera de cuero artesanal con costuras visibles" class="rounded-lg shadow-2xl mb-6">
                             <h3 class="text-2xl font-serif font-bold text-brand-brown">Diseño y Funcionalidad</h3>
                             <p class="mt-2 text-gray-600">Elegancia y practicidad en tu bolsillo, con costuras reforzadas que definen la calidad.</p>
-                             <button class="nav-link mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition" data-page="shop">Ver más</button>
+                             <a href="#shop" class="mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition">Ver más</a>
                         </div>
-                        
                         <div class="flex flex-col items-center text-center reveal">
-                            <img src="https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg" alt="Set Matero Artesanal" class="rounded-lg shadow-2xl mb-6">
+                            <img loading="lazy" src="https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg" alt="Set matero completo forrado en cuero con mate y yerbera" class="rounded-lg shadow-2xl mb-6">
                             <h3 class="text-2xl font-serif font-bold text-brand-brown">Tradición Matera</h3>
                             <p class="mt-2 text-gray-600">Un set completo forrado en cuero, ideal para acompañar momentos y crear recuerdos.</p>
-                             <button class="nav-link mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition" data-page="shop">Ver más</button>
+                             <a href="#shop" class="mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition">Ver más</a>
                         </div>
-                        
                     </div>
                 </div>
             </section>
             
-            <section id="nosotros" class="py-20 lg:py-24 bg-white">
+            <!-- Storytelling: Artisan Process Section -->
+            <!-- Storytelling: Sección del Proceso Artesanal -->
+            <section id="proceso" class="py-20 lg:py-24 bg-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16 reveal">
+                        <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Del Cuero a Tus Manos</h2>
+                        <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Cada pieza es el resultado de un proceso meticuloso, donde la paciencia y la habilidad son nuestras principales herramientas.</p>
+                    </div>
+                    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 text-center reveal">
+                        <div class="flex flex-col items-center">
+                            <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="gem" class="w-10 h-10 text-brand-brown"></i></div>
+                            <h3 class="font-bold text-lg text-brand-brown">1. Selección del Cuero</h3>
+                            <p class="text-gray-600 text-sm">Elegimos solo cuero de plena flor, garantizando la máxima calidad y durabilidad.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="scissors" class="w-10 h-10 text-brand-brown"></i></div>
+                            <h3 class="font-bold text-lg text-brand-brown">2. Corte a Mano</h3>
+                            <p class="text-gray-600 text-sm">Cada pieza es cortada individualmente, respetando la veta natural del cuero.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="move-diagonal-2" class="w-10 h-10 text-brand-brown"></i></div>
+                            <h3 class="font-bold text-lg text-brand-brown">3. Costura Reforzada</h3>
+                            <p class="text-gray-600 text-sm">Utilizamos hilo encerado de alta resistencia para asegurar uniones que no fallan.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="paintbrush" class="w-10 h-10 text-brand-brown"></i></div>
+                            <h3 class="font-bold text-lg text-brand-brown">4. Acabado Final</h3>
+                            <p class="text-gray-600 text-sm">Los bordes son pulidos y sellados a mano, dando un acabado profesional y duradero.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- "About Us" Section -->
+            <!-- Sección "Nosotros" -->
+            <section id="nosotros" class="py-20 lg:py-24 bg-brand-beige">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div class="reveal"><img src="https://www.vmcdn.ca/f/files/okotokstoday/2023-images/231227/news-chuck-stormes-saddlemaker-rk-5400-web.jpg;w=960;h=640;bgcolor=000000" alt="Artesano trabajando" class="rounded-lg shadow-2xl w-full h-full object-cover"></div>
+                        <div class="reveal"><img loading="lazy" src="https://www.vmcdn.ca/f/files/okotokstoday/2023-images/231227/news-chuck-stormes-saddlemaker-rk-5400-web.jpg;w=960;h=640;bgcolor=000000" alt="Artesano talabartero trabajando el cuero en su taller" class="rounded-lg shadow-2xl w-full h-full object-cover"></div>
                         <div class="text-center lg:text-left reveal">
                             <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Manos que Cuentan una Historia</h2>
-                            <p class="mt-6 text-lg text-gray-600">Don Sixto no es solo una marca, es el legado de una familia de artesanos. Desde hace más de 50 años, trabajamos el cuero con la misma pasión y dedicación que nuestros abuelos.</p>
+                            <p class="mt-6 text-lg text-gray-600">Don Sixto no es solo una marca, es el legado de una familia de artesanos. Desde hace más de 50 años, trabajamos el cuero con la misma pasión y dedicación que nuestros abuelos, seleccionando el mejor cuero crudo argentino para transformarlo en piezas únicas.</p>
                         </div>
                     </div>
                 </div>
             </section>
             
+            <!-- Community and Trust Signals Section -->
+            <!-- Sección de Comunidad y Señales de Confianza -->
             <section id="comunidad" class="py-20 lg:py-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-12 reveal"><a href="https://www.instagram.com/talabarteria_donsixto/" target="_blank" rel="noopener noreferrer" class="text-3xl font-serif font-bold text-brand-brown hover:text-brand-accent transition-colors">Seguinos en @talabarteria_donsixto</a></div>
+                    <div class="text-center mb-12 reveal"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-3xl font-serif font-bold text-brand-brown hover:text-brand-accent transition-colors">Seguinos en @ferrandini._</a></div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 reveal">
-                        <img src="https://i.imgur.com/j9DlvPc.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 1">
-                        <img src="https://i.imgur.com/tQD8gv8.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 2">
-                        <img src="https://i.imgur.com/sO5wcRR.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 3">
-                        <img src="https://i.imgur.com/jaDiIE3.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 4">
+                        <img loading="lazy" src="https://i.imgur.com/j9DlvPc.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Ejemplo de producto de cuero publicado en Instagram 1">
+                        <img loading="lazy" src="https://i.imgur.com/tQD8gv8.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Ejemplo de producto de cuero publicado en Instagram 2">
+                        <img loading="lazy" src="https://i.imgur.com/sO5wcRR.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Ejemplo de producto de cuero publicado en Instagram 3">
+                        <img loading="lazy" src="https://i.imgur.com/jaDiIE3.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Ejemplo de producto de cuero publicado en Instagram 4">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center reveal">
                         <div class="flex flex-col items-center"><i data-lucide="truck" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Envíos a todo el país</h3><p class="text-gray-600">Recibí tu pedido en la puerta de tu casa.</p></div>
-                        <div class="flex flex-col items-center"><i data-lucide="recycle" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Devolución sin cargo</h3><p class="text-gray-600">30 días para devolver tu producto si no estás conforme.</p></div>
-                        <div class="flex flex-col items-center"><i data-lucide="credit-card" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Pagos seguros</h3><p class="text-gray-600">Aceptamos todas las tarjetas y Mercado Pago.</p></div>
+                        <div class="flex flex-col items-center"><i data-lucide="shield-check" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Garantía de por Vida</h3><p class="text-gray-600">Nuestros productos están hechos para durar. Si tienes un problema, lo reparamos.</p></div>
+                        <div class="flex flex-col items-center"><i data-lucide="credit-card" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Pagos seguros</h3><p class="text-gray-600">Aceptamos todas las tarjetas y Mercado Pago.</p>
+                        <div class="flex justify-center items-center space-x-2 mt-2">
+                           <img loading="lazy" src="https://placehold.co/40x25/fafafa/000?text=VISA" alt="Logo de Visa" class="h-6"/>
+                           <img loading="lazy" src="https://placehold.co/40x25/fafafa/000?text=MC" alt="Logo de Mastercard" class="h-6"/>
+                           <img loading="lazy" src="https://placehold.co/60x25/fafafa/000?text=MP" alt="Logo de Mercado Pago" class="h-6"/>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <!-- Sección de Testimonios -->
+            <section id="testimonios" class="py-20 lg:py-24 bg-white">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16 reveal">
+                        <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Lo que dicen nuestros clientes</h2>
+                        <p class="mt-4 text-lg text-gray-600">La calidad no solo se ve, se siente.</p>
+                    </div>
+                    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="bg-brand-beige p-8 rounded-lg text-center reveal">
+                            <p class="text-gray-700 italic">"Increíble la calidad del cinturón. Se nota que está hecho para durar toda la vida. ¡Valió cada peso!"</p>
+                            <p class="mt-4 font-bold text-brand-brown">- Juan Pérez</p>
+                        </div>
+                        <div class="bg-brand-beige p-8 rounded-lg text-center reveal">
+                            <p class="text-gray-700 italic">"Recibí mi billetera y es más linda que en las fotos. El envío fue rapidísimo. Súper recomendables."</p>
+                            <p class="mt-4 font-bold text-brand-brown">- María García</p>
+                        </div>
                     </div>
                 </div>
             </section>
             
-            <section id="contacto" class="py-20 lg:py-24 bg-white">
+            <!-- Contact Section -->
+            <!-- Sección de Contacto -->
+            <section id="contacto" class="py-20 lg:py-24 bg-gray-50">
                  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16 reveal"><h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Encontranos</h2></div>
                     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center reveal">
-                        <div class="bg-gray-50 p-8 rounded-lg">
+                        <div class="bg-white p-8 rounded-lg shadow-sm">
                             <h3 class="text-2xl font-bold text-brand-brown mb-4">Información de Contacto</h3>
-                            <p class="text-gray-700 mb-2"><strong>Email:</strong> info@donsixto.com.ar</p>
-                            <p class="text-gray-700 mb-2"><strong>Teléfono:</strong> +54 9 11 6025-6349</p>
-                            <p class="text-gray-700"><strong>Taller:</strong> Suipacha, Buenos Aires, Argentina</p>
+                            <p class="text-gray-700 mb-2"><strong>Email:</strong> juancruzferrandini@gmail.com</p>
+                            <p class="text-gray-700 mb-2"><strong>Teléfono:</strong> +54 9 11 1234-5678</p>
+                            <p class="text-gray-700"><strong>Taller:</strong> Buenos Aires, Argentina</p>
                         </div>
                         <div id="map-container" class="w-full shadow-lg h-[400px] rounded-lg bg-gray-200"></div>
                     </div>
                  </div>
             </section>
             
+            <!-- Footer -->
+            <!-- Pie de Página -->
             <footer class="bg-brand-brown text-white">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
                     <p class="font-serif text-2xl font-bold">Don Sixto</p>
-                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/talabarteria_donsixto/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
-                    <p class="mt-8 text-gray-400 text-sm">&copy; 2024 Don Sixto Talabartería. Todos los derechos reservados.</p>
+                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
+                    <div class="mt-6 flex justify-center space-x-4 sm:space-x-6 text-gray-400 text-sm">
+                        <a href="#faq" class="hover:text-white transition-colors">Preguntas Frecuentes</a>
+                        <a href="#returns" class="hover:text-white transition-colors">Políticas de Devolución</a>
+                        <a href="#terms" class="hover:text-white transition-colors">Términos y Condiciones</a>
+                    </div>
+                    <p class="mt-8 text-gray-400 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </main>
 
+        <!-- SHOP PAGE -->
         <!-- PÁGINA DE TIENDA -->
         <main id="page-shop" class="page hidden">
              <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28">
@@ -209,12 +351,13 @@
              <footer class="bg-gray-100 mt-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
                     <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
-                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/talabarteria_donsixto/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
-                    <p class="mt-8 text-gray-500 text-sm">&copy; 2024 Don Sixto Talabartería. Todos los derechos reservados.</p>
+                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
+                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </main>
         
+        <!-- PRODUCT DETAIL PAGE -->
         <!-- PÁGINA DE DETALLE DE PRODUCTO -->
         <main id="page-product" class="page hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28">
@@ -223,38 +366,140 @@
              <footer class="bg-gray-100 mt-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
                     <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
-                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/talabarteria_donsixto/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
-                    <p class="mt-8 text-gray-500 text-sm">&copy; 2024 Don Sixto Talabartería. Todos los derechos reservados.</p>
+                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
+                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </main>
+
+        <!-- FAQ PAGE -->
+        <!-- PÁGINA DE PREGUNTAS FRECUENTES (FAQ) -->
+        <main id="page-faq" class="page hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+                <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-md">
+                    <h2 class="text-4xl font-serif font-bold text-brand-brown mb-8">Preguntas Frecuentes</h2>
+                    <div class="space-y-6 text-gray-700">
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-brown">¿Qué tipo de cuero utilizan?</h3>
+                            <p>Utilizamos exclusivamente cuero de plena flor de origen argentino, conocido por su durabilidad y la hermosa pátina que desarrolla con el tiempo. Es la capa más resistente y de mayor calidad del cuero.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-brown">¿Hacen envíos a todo el país?</h3>
+                            <p>Sí, realizamos envíos a todos los rincones de Argentina a través de servicios de correo confiables. El costo y tiempo de envío varía según la localidad.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-brown">¿Mi producto tiene garantía?</h3>
+                            <p>¡Absolutamente! Confiamos tanto en nuestro trabajo que ofrecemos una garantía de por vida en todas las costuras y defectos de fabricación. Si algo falla, lo reparamos sin costo.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-brown">¿Cuánto tarda en llegar mi pedido?</h3>
+                            <p>Una vez despachado, el tiempo de entrega estimado es de 3 a 7 días hábiles, dependiendo de tu ubicación.</p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-12">
+                         <a href="#shop" class="inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-md hover:bg-opacity-90 transition">Volver a la Tienda</a>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-gray-100 mt-24">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+                    <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
+                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
+                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
+                </div>
+            </footer>
+        </main>
+        
+        <!-- RETURNS POLICY PAGE -->
+        <!-- PÁGINA DE POLÍTICAS DE DEVOLUCIÓN -->
+        <main id="page-returns" class="page hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+                 <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-md">
+                    <h2 class="text-4xl font-serif font-bold text-brand-brown mb-8">Políticas de Devolución</h2>
+                    <div class="space-y-4 text-gray-700">
+                        <p>Queremos que estés 100% satisfecho con tu compra. Si por alguna razón no lo estás, puedes solicitar una devolución dentro de los 30 días posteriores a la recepción de tu producto.</p>
+                        <p><strong>Condiciones para la devolución:</strong></p>
+                        <ul class="list-disc list-inside">
+                            <li>El producto debe estar sin uso y en las mismas condiciones en que lo recibiste.</li>
+                            <li>Debe conservar su embalaje original.</li>
+                            <li>Los costos de envío para la devolución corren por cuenta del cliente, a menos que el motivo sea un defecto de fábrica.</li>
+                        </ul>
+                        <p>Para iniciar una devolución, por favor contáctanos a <strong>juancruzferrandini@gmail.com</strong> con tu número de pedido y el motivo de la devolución.</p>
+                    </div>
+                     <div class="text-center mt-12">
+                         <a href="#shop" class="inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-md hover:bg-opacity-90 transition">Volver a la Tienda</a>
+                    </div>
+                </div>
+            </div>
+             <footer class="bg-gray-100 mt-24">
+                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+                    <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
+                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
+                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
+                </div>
+            </footer>
+        </main>
+
+        <!-- TERMS AND CONDITIONS PAGE -->
+        <!-- PÁGINA DE TÉRMINOS Y CONDICIONES -->
+        <main id="page-terms" class="page hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+                 <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-md">
+                    <h2 class="text-4xl font-serif font-bold text-brand-brown mb-8">Términos y Condiciones</h2>
+                     <div class="space-y-4 text-gray-700">
+                        <p>Bienvenido a Don Sixto. Al utilizar nuestro sitio web, aceptas cumplir con los siguientes términos y condiciones de uso.</p>
+                        <p><strong>Propiedad Intelectual:</strong> Todo el contenido publicado en este sitio, incluyendo imágenes, textos, logos y diseños, es propiedad de Don Sixto y está protegido por las leyes de derecho de autor. Queda prohibida su reproducción sin nuestro consentimiento explícito.</p>
+                        <p><strong>Precios y Pagos:</strong> Nos reservamos el derecho de modificar los precios de nuestros productos en cualquier momento y sin previo aviso. Todos los precios están expresados en Pesos Argentinos (ARS).</p>
+                        <p><strong>Uso del Sitio:</strong> Te comprometes a no utilizar este sitio para fines ilícitos o que puedan perjudicar la imagen de la marca.</p>
+                    </div>
+                     <div class="text-center mt-12">
+                         <a href="#shop" class="inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-md hover:bg-opacity-90 transition">Volver a la Tienda</a>
+                    </div>
+                </div>
+            </div>
+             <footer class="bg-gray-100 mt-24">
+                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+                    <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
+                    <div class="flex justify-center mt-4"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a></div>
+                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
+                </div>
+            </footer>
+        </main>
+
     </div>
 
+    <!-- FLOATING WHATSAPP BUTTON -->
     <!-- BOTÓN DE WHATSAPP FLOTANTE -->
-    <a href="https://wa.me/5491160256349" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg z-40 hover:bg-green-600 transition-transform hover:scale-110">
+    <a href="https://wa.me/5491112345678" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg z-40 hover:bg-green-600 transition-transform hover:scale-110">
         <i data-lucide="message-circle" class="w-8 h-8"></i>
     </a>
     
-    <!-- Notificación de "Añadido al carrito" -->
+    <!-- NOTIFICATION POPUP -->
+    <!-- POPUP DE NOTIFICACIÓN -->
     <div id="notification" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-3 px-6 rounded-lg shadow-lg">
-        <p>¡Producto añadido al carrito!</p>
+        <p></p>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // --- PRODUCT DATABASE ---
         // --- BASE DE DATOS DE PRODUCTOS ---
         const products = [
-            { id: 1, name: 'Cinturón Clásico de Cuero', price: 5, category: 'cinturon', images: ['https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png','https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png' ], description: 'Un clásico atemporal. Hecho con cuero de plena flor y una hebilla de bronce macizo, este cinturón está diseñado para durar toda la vida y mejorar con el paso del tiempo.' },
-            { id: 2, name: 'Billetera de Cuero Genuino', price: 2, category: 'billetera', images: ['https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg', 'https://images.unsplash.com/photo-1615393329869-68800273c33b?q=80&w=1974&auto=format=fit=crop'], description: 'Elegancia y funcionalidad en tu bolsillo. Con múltiples compartimentos para tarjetas y billetes, esta billetera está cosida a mano con hilo encerado para una máxima durabilidad.' },
-            { id: 3, name: 'Set Matero Artesanal', price: 8, category: 'accesorio', images: ['https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg', 'https://images.unsplash.com/photo-1524580324424-444e197a94a2?q=80&w=1974&auto=format&fit=crop'], description: 'Un set matero completo forrado en cuero de la más alta calidad. Incluye mate, bombilla y yerbera. Ideal para acompañar tus mejores momentos y crear recuerdos.' },
+            { id: 1, name: 'Cinturón Clásico de Cuero', price: 28500, category: 'cinturon', images: ['https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png','https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png' ], description: 'Un clásico atemporal. Hecho con cuero de plena flor y una hebilla de bronce macizo, este cinturón está diseñado para durar toda la vida y mejorar con el paso del tiempo.' },
+            { id: 2, name: 'Billetera de Cuero Genuino', price: 15000, category: 'billetera', images: ['https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg', 'https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg'], description: 'Elegancia y funcionalidad en tu bolsillo. Con múltiples compartimentos para tarjetas y billetes, esta billetera está cosida a mano con hilo encerado para una máxima durabilidad.' },
+            { id: 3, name: 'Set Matero Artesanal', price: 42000, category: 'accesorio', images: ['https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg', 'https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg'], description: 'Un set matero completo forrado en cuero de la más alta calidad. Incluye mate, bombilla y yerbera. Ideal para acompañar tus mejores momentos y crear recuerdos.' },
         ];
         let cart = [];
 
+        // --- DOM SELECTORS ---
         // --- SELECTORES DEL DOM ---
         const body = document.body
         const pageHome = document.getElementById('page-home');
         const pageShop = document.getElementById('page-shop');
         const pageProduct = document.getElementById('page-product');
+        const pageFaq = document.getElementById('page-faq');
+        const pageReturns = document.getElementById('page-returns');
+        const pageTerms = document.getElementById('page-terms');
         const productDetailContent = document.getElementById('product-detail-content');
         const header = document.getElementById('header');
         const headerContent = document.getElementById('header-content');
@@ -272,23 +517,33 @@
         const noResults = document.getElementById('no-results');
         const checkoutButton = document.getElementById('checkout-button');
         const notification = document.getElementById('notification');
+        const cartButtonIcon = document.querySelector('#cart-button i');
 
-        // --- LÓGICA DE NAVEGACIÓN (SPA) ---
+        // --- SPA (SINGLE PAGE APPLICATION) NAVIGATION LOGIC ---
+        // --- LÓGICA DE NAVEGACIÓN SPA (SINGLE PAGE APPLICATION) ---
         const switchPage = (pageId, productId = null) => {
-            const pages = { home: pageHome, shop: pageShop, product: pageProduct };
-            // Oculta todas las páginas
+            // Object containing all pages for easy access
+            // Objeto que contiene todas las páginas para un acceso fácil
+            const pages = { home: pageHome, shop: pageShop, product: pageProduct, faq: pageFaq, returns: pageReturns, terms: pageTerms };
+            
+            // Hide all pages
+            // Ocultar todas las páginas
             Object.values(pages).forEach(p => p.classList.add('hidden'));
             
-            // Muestra la página actual
+            // Show the current page, or home if the pageId is invalid
+            // Mostrar la página actual, o la de inicio si el pageId es inválido
             const currentPage = pages[pageId];
             if (currentPage) {
                 currentPage.classList.remove('hidden');
+            } else {
+                pages.home.classList.remove('hidden');
             }
             
+            // Adjust header style based on the current page
+            // Ajustar el estilo del encabezado según la página actual
             const isHomePage = pageId === 'home';
             searchButton.classList.toggle('hidden', isHomePage);
 
-            // Aplica el estilo del header según la página
             if (isHomePage) {
                 handleHeaderScroll();
             } else {
@@ -297,18 +552,51 @@
                 headerContent.classList.add('text-brand-brown');
             }
             
-            // Si es la página de producto, muestra los detalles
+            // If it's a product page, display its details
+            // Si es una página de producto, mostrar sus detalles
             if (pageId === 'product' && productId) {
                 displayProductDetail(productId);
             }
             
-            // Siempre haz scroll al principio de la página al cambiar
-            window.scrollTo(0, 0);
+            // Scroll to the top of the page on every navigation, unless it's a product view
+            // Hacer scroll al principio de la página en cada navegación, a menos que sea una vista de producto
+            if (!productId) {
+                window.scrollTo(0, 0);
+            }
         };
 
-        // CORRECCIÓN: Se añade la función que faltaba
+        // --- HASH-BASED ROUTING ---
+        // --- ENRUTAMIENTO BASADO EN HASH ---
+        const handleRouteChange = () => {
+            const hash = window.location.hash.slice(1); // Get hash without the '#' // Obtener el hash sin el '#'
+            const [page, param] = hash.split('/'); // Split to get page and optional parameter // Dividir para obtener la página y un parámetro opcional
+
+            const validPages = ['shop', 'product', 'faq', 'returns', 'terms'];
+
+            if (validPages.includes(page)) {
+                // If the hash corresponds to a known page, switch to it
+                // Si el hash corresponde a una página conocida, cambiar a ella
+                switchPage(page, param ? parseInt(param) : null);
+            } else {
+                // Otherwise, default to the home page and handle anchor links
+                // De lo contrario, ir a la página de inicio y manejar los enlaces de anclaje
+                switchPage('home');
+                if (hash) {
+                    setTimeout(() => {
+                        const targetElement = document.getElementById(hash);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }, 100); // Timeout to allow the page to render // Timeout para permitir que la página se renderice
+                }
+            }
+            closePanel(menuPanel); // Always close menu on navigation // Siempre cerrar el menú al navegar
+        };
+
+        // --- HEADER SCROLL EFFECT ---
+        // --- EFECTO DE SCROLL EN EL ENCABEZADO ---
         const handleHeaderScroll = () => {
-            if (pageHome.classList.contains('hidden')) return;
+            if (pageHome.classList.contains('hidden')) return; // Only apply on home page // Aplicar solo en la página de inicio
             if (window.scrollY > 50) {
                 header.classList.add('header-scrolled');
                 headerContent.classList.remove('text-white');
@@ -320,66 +608,44 @@
             }
         };
         window.addEventListener('scroll', handleHeaderScroll);
-
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = e.currentTarget.dataset.page;
-                const href = e.currentTarget.getAttribute('href');
-
-                // CORRECCIÓN: Lógica mejorada para manejar el scroll
-                if (page === 'home' && href && href.startsWith('#')) {
-                    if (pageHome.classList.contains('hidden')) {
-                        switchPage('home');
-                        setTimeout(() => {
-                            const targetElement = document.querySelector(href);
-                            if (targetElement) {
-                                targetElement.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }, 100);
-                    } else {
-                        const targetElement = document.querySelector(href);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }
-                } else if (page) {
-                    switchPage(page);
-                }
-                closePanel(menuPanel);
-            });
-        });
         
+        // --- SIDE PANEL LOGIC ---
         // --- LÓGICA DE PANELES LATERALES ---
         const openPanel = (panel) => {
             panelBackdrop.classList.remove('hidden');
             setTimeout(() => panelBackdrop.classList.remove('opacity-0'), 10);
             panel.classList.add('open');
-            body.style.overflow = 'hidden';
+            body.style.overflow = 'hidden'; // Prevent background scrolling // Evitar el scroll del fondo
         };
         const closePanel = (panel) => {
             panelBackdrop.classList.add('opacity-0');
             setTimeout(() => panelBackdrop.classList.add('hidden'), 400);
             panel.classList.remove('open');
-            body.style.overflow = 'auto';
+            body.style.overflow = 'auto'; // Restore scrolling // Restaurar el scroll
         };
         
+        // --- EVENT LISTENERS FOR PANELS ---
+        // --- EVENT LISTENERS PARA PANELES ---
         document.getElementById('menu-button').addEventListener('click', () => openPanel(menuPanel));
         document.getElementById('close-menu-button').addEventListener('click', () => closePanel(menuPanel));
         document.getElementById('cart-button').addEventListener('click', () => openPanel(cartPanel));
         document.getElementById('close-cart-button').addEventListener('click', () => closePanel(cartPanel));
         panelBackdrop.addEventListener('click', () => { closePanel(menuPanel); closePanel(cartPanel); });
         
-        // --- LÓGICA DEL CARRITO Y NOTIFICACIÓN ---
-        const showNotification = () => {
+        // --- NOTIFICATION LOGIC ---
+        // --- LÓGICA DE NOTIFICACIONES ---
+        const showNotification = (message, duration = 2000) => {
+            notification.querySelector('p').textContent = message;
             notification.classList.add('show');
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 2000);
+            }, duration);
         };
 
+        // --- CART LOGIC ---
+        // --- LÓGICA DEL CARRITO ---
         const updateCart = () => {
-             cartItemsContainer.innerHTML = '';
+            cartItemsContainer.innerHTML = '';
             let subtotal = 0;
             let totalItems = 0;
             if (cart.length === 0) {
@@ -420,9 +686,15 @@
                 cart.push({ ...product, quantity });
             }
             updateCart();
-            showNotification();
+            showNotification('¡Producto añadido al carrito!');
+            // Cart icon microinteraction
+            // Microinteracción del ícono del carrito
+            cartButtonIcon.classList.add('jiggle');
+            setTimeout(() => cartButtonIcon.classList.remove('jiggle'), 400);
         };
         
+        // Event delegation for cart item actions
+        // Delegación de eventos para acciones en los items del carrito
         cartItemsContainer.addEventListener('click', e => {
             const target = e.target;
             const parent = target.closest('[data-id]');
@@ -430,45 +702,81 @@
             const productId = parseInt(parent.dataset.id);
             const itemIndex = cart.findIndex(item => item.id === productId);
             if (itemIndex === -1) return;
+
             if (target.classList.contains('quantity-change')) {
                 const change = parseInt(target.dataset.change);
                 cart[itemIndex].quantity += change;
-                if (cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1);
+                if (cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1); // Remove if quantity is 0 or less // Quitar si la cantidad es 0 o menos
             } else if (target.classList.contains('remove-item')) {
-                cart.splice(itemIndex, 1);
+                cart.splice(itemIndex, 1); // Remove item from cart // Quitar item del carrito
             }
             updateCart();
         });
 
-        // --- LÓGICA DE LA TIENDA Y VISTA DE PRODUCTO ---
+        // --- PRODUCT DISPLAY LOGIC ---
+        // --- LÓGICA DE VISUALIZACIÓN DE PRODUCTOS ---
         const displayProductDetail = (productId) => {
             const product = products.find(p => p.id === productId);
-            if (!product) { switchPage('shop'); return; }
+            if (!product) { 
+                window.location.hash = '#shop'; // Redirect to shop if product not found // Redirigir a la tienda si el producto no se encuentra
+                return; 
+            }
             
-            let thumbnailsHTML = product.images.map((img, index) => `<img src="${img}" alt="Vista ${index+1}" class="w-full h-20 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'}" data-index="${index}">`).join('');
+            // Create thumbnails HTML
+            // Crear HTML de las miniaturas
+            let thumbnailsHTML = product.images.map((img, index) => `<img src="${img}" alt="Vista previa ${index+1} del producto ${product.name}" class="w-full h-20 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'}" data-index="${index}">`).join('');
 
-            productDetailContent.innerHTML = `
+            // Create main product content HTML
+            // Crear HTML del contenido principal del producto
+            let mainContentHTML = `
                 <div class="text-sm text-gray-500 mb-4">
-                    <button class="nav-link hover:text-brand-brown" data-page="home">Inicio</button> > 
-                    <button class="nav-link hover:text-brand-brown" data-page="shop">Tienda</button> > 
+                    <a href="#" class="hover:text-brand-brown">Inicio</a> > 
+                    <a href="#shop" class="hover:text-brand-brown">Tienda</a> > 
                     <span class="font-semibold text-brand-text">${product.name}</span>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div class="flex flex-row-reverse md:flex-row gap-4">
-                        <div class="w-4/5"><img id="main-product-image" src="${product.images[0]}" alt="${product.name}" class="w-full h-auto object-cover rounded-lg shadow-lg"></div>
+                        <div class="w-4/5"><img id="main-product-image" src="${product.images[0]}" alt="Imagen principal del producto ${product.name}" class="w-full h-auto object-cover rounded-lg shadow-lg"></div>
                         <div class="w-1/5 flex flex-col gap-4">${thumbnailsHTML}</div>
                     </div>
                     <div>
                         <h2 class="text-4xl font-serif font-bold text-brand-brown">${product.name}</h2>
-                        <p class="text-3xl font-bold text-brand-brown my-4">$${product.price.toLocaleString('es-AR')}</p>
+                        <div class="my-4">
+                            <p class="text-3xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p>
+                            <p class="text-sm text-gray-500 mt-1">IVA incluido. ¡Cuotas sin interés!</p>
+                        </div>
                         <p class="text-gray-600 leading-relaxed">${product.description}</p>
+                         <p class="text-sm font-bold text-amber-600 mt-4">¡Edición limitada! Últimas unidades disponibles.</p>
                         <div class="flex items-center gap-4 mt-8">
                             <div class="flex items-center border rounded-lg"><button id="decrease-qty" class="px-4 py-2">-</button><span id="product-qty" class="px-4 py-2">1</span><button id="increase-qty" class="px-4 py-2">+</button></div>
-                            <button id="add-to-cart-detail" class="flex-grow bg-brand-brown text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition">Agregar al Carrito</button>
+                            <button id="add-to-cart-detail" class="flex-grow bg-brand-brown text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition">Añadir a mi Carrito</button>
                         </div>
                     </div>
                 </div>`;
+            
+            // Create recommended products HTML
+            // Crear HTML de productos recomendados
+            let recommendationsHTML = '<div class="mt-24"><h3 class="text-3xl font-serif font-bold text-brand-brown text-center mb-8">También te podría interesar</h3><div class="grid grid-cols-1 sm:grid-cols-2 gap-8">';
+            const recommendedProducts = products.filter(p => p.id !== productId).slice(0, 2);
+            recommendedProducts.forEach(p => {
+                recommendationsHTML += `
+                    <a href="#product/${p.id}" class="block bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                        <img loading="lazy" src="${p.images[0]}" alt="${p.name}" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h4 class="font-semibold text-lg text-brand-text">${p.name}</h4>
+                            <p class="mt-2 text-xl font-bold text-brand-brown">$${p.price.toLocaleString('es-AR')}</p>
+                        </div>
+                    </a>
+                `;
+            });
+            recommendationsHTML += '</div></div>';
 
+            // Inject the complete HTML into the container
+            // Inyectar el HTML completo en el contenedor
+            productDetailContent.innerHTML = mainContentHTML + recommendationsHTML;
+
+            // Event listeners for thumbnails and quantity controls
+            // Event listeners para las miniaturas y controles de cantidad
             const mainImage = document.getElementById('main-product-image');
             productDetailContent.querySelectorAll('[data-index]').forEach(thumb => {
                 thumb.addEventListener('click', () => {
@@ -484,24 +792,20 @@
             document.getElementById('add-to-cart-detail').addEventListener('click', () => {
                 addToCart(product.id, parseInt(qtyEl.textContent));
             });
-            
-            productDetailContent.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => { e.preventDefault(); switchPage(e.currentTarget.dataset.page); });
-            });
         };
 
+        // --- SHOP PAGE: FILTERING AND DISPLAY ---
+        // --- PÁGINA DE TIENDA: FILTRADO Y VISUALIZACIÓN ---
         const displayProducts = (filteredProducts) => {
             productGrid.innerHTML = '';
             noResults.classList.toggle('hidden', filteredProducts.length > 0);
             filteredProducts.forEach(product => {
-                const productElement = document.createElement('div');
-                productElement.className = 'bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer';
+                const productElement = document.createElement('a');
+                productElement.href = `#product/${product.id}`;
+                productElement.className = 'block bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer';
                 productElement.dataset.id = product.id;
-                productElement.innerHTML = `<img src="${product.images[0]}" alt="${product.name}" class="w-full h-64 object-cover pointer-events-none"><div class="p-6 pointer-events-none"><h3 class="font-semibold text-lg text-brand-text">${product.name}</h3><p class="mt-2 text-xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p></div>`;
+                productElement.innerHTML = `<img loading="lazy" src="${product.images[0]}" alt="Imagen del producto ${product.name}" class="w-full h-64 object-cover pointer-events-none"><div class="p-6 pointer-events-none"><h3 class="font-semibold text-lg text-brand-text">${product.name}</h3><p class="mt-2 text-xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p></div>`;
                 productGrid.appendChild(productElement);
-                productElement.addEventListener('click', () => {
-                    switchPage('product', parseInt(productElement.dataset.id));
-                });
             });
         };
 
@@ -510,6 +814,8 @@
             const searchTerm = searchInput.value.toLowerCase();
             const category = categoryFilter.value;
             const sort = sortFilter.value;
+            // Apply filters and sorting
+            // Aplicar filtros y ordenamiento
             if (searchTerm) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
             if (category !== 'all') filtered = filtered.filter(p => p.category === category);
             if (sort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
@@ -517,10 +823,14 @@
             displayProducts(filtered);
         };
 
+        // Event listeners for shop filters
+        // Event listeners para los filtros de la tienda
         searchInput.addEventListener('input', filterAndSortProducts);
         categoryFilter.addEventListener('change', filterAndSortProducts);
         sortFilter.addEventListener('change', filterAndSortProducts);
         
+        // --- INTERSECTION OBSERVER FOR SCROLL ANIMATIONS ---
+        // --- INTERSECTION OBSERVER PARA ANIMACIONES DE SCROLL ---
         const revealElements = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -529,48 +839,45 @@
         }, { threshold: 0.1 });
         revealElements.forEach(el => observer.observe(el));
         
-        // --- CONEXIÓN CON BACKEND ---
-        checkoutButton.addEventListener('click', async () => {
+        // --- CHECKOUT BUTTON (PROTOTYPE) ---
+        // --- BOTÓN DE FINALIZAR COMPRA (PROTOTIPO) ---
+        checkoutButton.addEventListener('click', () => {
             if (cart.length === 0) {
-                alert("Tu carrito está vacío.");
+                showNotification("Tu carrito está vacío.", 3000);
                 return;
             }
+            
             checkoutButton.disabled = true;
             checkoutButton.textContent = 'Procesando...';
-            try {
-                const response = await fetch('http://localhost:3000/create-preference', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cart: cart })
-                });
-                const data = await response.json();
-                if (data.init_point) {
-                    window.location.href = data.init_point;
-                } else {
-                    throw new Error('No se recibió el punto de inicio de pago.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Hubo un error al iniciar el proceso de pago. Por favor, intente de nuevo.');
-            } finally {
+
+            // Simulate processing and show a message
+            // Simular procesamiento y mostrar un mensaje
+            setTimeout(() => {
+                showNotification('Función de pago no implementada en este prototipo.', 4000);
                 checkoutButton.disabled = false;
                 checkoutButton.textContent = 'Finalizar Compra';
-            }
+            }, 1500);
         });
 
+        // --- INITIALIZATION ---
         // --- INICIALIZACIÓN ---
-        switchPage('home');
-        filterAndSortProducts();
-        updateCart();
+        window.addEventListener('hashchange', handleRouteChange); // Listen for hash changes // Escuchar cambios en el hash
+        handleRouteChange(); // Initial route check on page load // Chequeo de ruta inicial al cargar la página
+        filterAndSortProducts(); // Initial product display // Visualización inicial de productos
+        updateCart(); // Initial cart update // Actualización inicial del carrito
         
+        // Initialize Google Map
+        // Inicializar mapa de Google
         try {
             const mapContainer = document.getElementById('map-container');
-            mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26342.92634842583!2d-59.70882165!3d-34.7750165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bc917a43813849%3A0x55589e68f396f14b!2sSuipacha%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1724693489544!5m2!1ses-419!2sar" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>`;
+            mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d210146.68231174355!2d-58.57338473715822!3d-34.61574369400244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires%2C%20CABA!5e0!3m2!1ses-419!2sar!4v1725394855583!5m2!1ses-419!2sar" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>`;
         } catch (error) {
             console.error("Error al inicializar el mapa:", error);
             document.getElementById('map-container').innerHTML = '<div class="bg-gray-200 h-full w-full flex items-center justify-center rounded-lg"><p class="text-gray-500">No se pudo cargar el mapa.</p></div>';
         }
 
+        // Initialize Lucide Icons
+        // Inicializar Íconos de Lucide
         lucide.createIcons();
     });
     </script>
