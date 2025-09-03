@@ -9,6 +9,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@400;700;900&display.swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* --- ESTILOS GENERALES Y ANIMACIONES --- */
+        html { scroll-behavior: smooth; }
+        .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .header-scrolled { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .hero-gradient::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); z-index: 1; }
+        .side-panel { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); z-index: 60; }
+        .side-panel.open { transform: translateX(0); }
+        .panel-backdrop { transition: opacity 0.4s ease-in-out; z-index: 55; }
+        .page { transition: opacity 0.5s ease-in-out, visibility 0.5s; }
+        .page.hidden { opacity: 0; visibility: hidden; position: absolute; top: 0; left: 0; right: 0; width: 100%;}
+        .thumbnail-active { border-color: #4E342E; }
+        /* Estilo para la notificación */
+        #notification {
+            transition: opacity 0.5s, transform 0.5s;
+            transform: translateY(100%);
+            opacity: 0;
+            z-index: 100;
+        }
+        #notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -19,19 +44,6 @@
             }
         }
     </script>
-    <style>
-        html { scroll-behavior: smooth; }
-        .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        .header-scrolled { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
-        .hero-gradient::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); z-index: 1; }
-        .side-panel { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); z-index: 60; }
-        .side-panel.open { transform: translateX(0); }
-        .panel-backdrop { transition: opacity 0.4s ease-in-out; z-index: 55; }
-        .page { transition: opacity 0.5s ease-in-out, visibility 0.5s; }
-        .page.hidden { opacity: 0; visibility: hidden; position: absolute; }
-        .thumbnail-active { border-color: #4E342E; }
-    </style>
 </head>
 <body class="bg-brand-beige font-sans text-brand-text">
 
@@ -75,12 +87,12 @@
                 <span class="text-lg font-semibold">Subtotal:</span>
                 <span id="cart-subtotal" class="text-xl font-bold text-brand-brown">$0</span>
             </div>
-            <button class="w-full bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-opacity-90 transition">Finalizar Compra</button>
+            <button id="checkout-button" class="w-full bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-opacity-90 transition">Finalizar Compra</button>
         </div>
     </div>
     
     <!-- ===== CONTENEDOR DE VISTAS (PÁGINAS) ===== -->
-    <div id="page-container">
+    <div id="page-container" class="relative">
         <!-- PÁGINA DE INICIO (HOME) -->
         <main id="page-home" class="page">
             <section class="h-screen bg-brand-brown flex flex-col items-center justify-center text-white relative hero-gradient">
@@ -95,13 +107,30 @@
             <section id="destacados" class="py-20 lg:py-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16 reveal"><h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Nuestros Productos Insignia</h2></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
-                        <div class="reveal"><img src="https://cdn.zyrosite.com/cdn-cgi/image/format=auto,w=1200,h=630,fit=crop,f=jpeg/cdn-ecommerce/store_01J5PG9V3Q2MGZT4EE8A499VYK/assets/1726341089879-Mesa%20de%20trabajo%201.png" alt="Cinturón de cuero" class="rounded-lg shadow-2xl"></div>
-                        <div class="text-center lg:text-left reveal">
-                            <h3 class="text-3xl font-serif font-bold text-brand-brown">Hecho para Durar</h3>
-                            <p class="mt-4 text-gray-600">Cada cinturón es cortado, teñido y cosido a mano, utilizando solo cuero de plena flor.</p>
-                            <button class="nav-link mt-6 inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-opacity-90 transition transform hover:scale-105" data-page="shop">Ver en la Tienda</button>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-start mb-20">
+                        
+                        <div class="flex flex-col items-center text-center reveal">
+                            <img src="https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png" alt="Cinturón de cuero" class="rounded-lg shadow-2xl mb-6">
+                            <h3 class="text-2xl font-serif font-bold text-brand-brown">Hecho para Durar</h3>
+                            <p class="mt-2 text-gray-600">Cada cinturón es cortado y cosido a mano, utilizando solo cuero de plena flor.</p>
+                            <button class="nav-link mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition" data-page="shop">Ver más</button>
                         </div>
+                        
+                        <div class="flex flex-col items-center text-center reveal">
+                            <img src="https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg" alt="Billetera de cuero" class="rounded-lg shadow-2xl mb-6">
+                            <h3 class="text-2xl font-serif font-bold text-brand-brown">Diseño y Funcionalidad</h3>
+                            <p class="mt-2 text-gray-600">Elegancia y practicidad en tu bolsillo, con costuras reforzadas que definen la calidad.</p>
+                             <button class="nav-link mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition" data-page="shop">Ver más</button>
+                        </div>
+                        
+                        <div class="flex flex-col items-center text-center reveal">
+                            <img src="https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg" alt="Set Matero Artesanal" class="rounded-lg shadow-2xl mb-6">
+                            <h3 class="text-2xl font-serif font-bold text-brand-brown">Tradición Matera</h3>
+                            <p class="mt-2 text-gray-600">Un set completo forrado en cuero, ideal para acompañar momentos y crear recuerdos.</p>
+                             <button class="nav-link mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition" data-page="shop">Ver más</button>
+                        </div>
+                        
                     </div>
                 </div>
             </section>
@@ -109,7 +138,7 @@
             <section id="nosotros" class="py-20 lg:py-24 bg-white">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div class="reveal"><img src="https://tse3.mm.bing.net/th/id/OIP.QC7lxxqWcDDNo7TnNxBjtwHaEk?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Artesano trabajando" class="rounded-lg shadow-2xl w-full h-full object-cover"></div>
+                        <div class="reveal"><img src="https://www.vmcdn.ca/f/files/okotokstoday/2023-images/231227/news-chuck-stormes-saddlemaker-rk-5400-web.jpg;w=960;h=640;bgcolor=000000" alt="Artesano trabajando" class="rounded-lg shadow-2xl w-full h-full object-cover"></div>
                         <div class="text-center lg:text-left reveal">
                             <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Manos que Cuentan una Historia</h2>
                             <p class="mt-6 text-lg text-gray-600">Don Sixto no es solo una marca, es el legado de una familia de artesanos. Desde hace más de 50 años, trabajamos el cuero con la misma pasión y dedicación que nuestros abuelos.</p>
@@ -122,10 +151,10 @@
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-12 reveal"><a href="https://www.instagram.com/talabarteria_donsixto/" target="_blank" rel="noopener noreferrer" class="text-3xl font-serif font-bold text-brand-brown hover:text-brand-accent transition-colors">Seguinos en @talabarteria_donsixto</a></div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 reveal">
-                        <img src="https://images.unsplash.com/photo-1524580324424-444e197a94a2?q=80&w=1974&auto=format&fit=crop" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 1">
-                        <img src="https://images.unsplash.com/photo-1615393329869-68800273c33b?q=80&w=1974&auto=format&fit=crop" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 2">
-                        <img src="https://images.unsplash.com/photo-1620921207299-9538909a3852?q=80&w=2070&auto=format&fit=crop" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 3">
-                        <img src="https://images.unsplash.com/photo-1542295393-1b2a2b0d6e0a?q=80&w=1974&auto=format&fit=crop" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 4">
+                        <img src="https://i.imgur.com/j9DlvPc.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 1">
+                        <img src="https://i.imgur.com/tQD8gv8.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 2">
+                        <img src="https://i.imgur.com/sO5wcRR.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 3">
+                        <img src="https://i.imgur.com/jaDiIE3.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Foto de Instagram 4">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center reveal">
                         <div class="flex flex-col items-center"><i data-lucide="truck" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Envíos a todo el país</h3><p class="text-gray-600">Recibí tu pedido en la puerta de tu casa.</p></div>
@@ -189,9 +218,7 @@
         <!-- PÁGINA DE DETALLE DE PRODUCTO -->
         <main id="page-product" class="page hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28">
-                <div id="product-detail-content">
-                    <!-- El contenido del producto se insertará aquí -->
-                </div>
+                <div id="product-detail-content"></div>
             </div>
              <footer class="bg-gray-100 mt-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
@@ -208,21 +235,28 @@
         <i data-lucide="message-circle" class="w-8 h-8"></i>
     </a>
     
+    <!-- Notificación de "Añadido al carrito" -->
+    <div id="notification" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-3 px-6 rounded-lg shadow-lg">
+        <p>¡Producto añadido al carrito!</p>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- BASE DE DATOS DE PRODUCTOS ---
         const products = [
-            { id: 1, name: 'Cinturón Clásico de Cuero', price: 35000, category: 'cinturon', images: ['https://cdn.zyrosite.com/cdn-cgi/image/format=auto,w=1200,h=630,fit=crop,f=jpeg/cdn-ecommerce/store_01J5PG9V3Q2MGZT4EE8A499VYK/assets/1726341089879-Mesa%20de%20trabajo%201.png', 'https://images.unsplash.com/photo-1620921207299-9538909a3852?q=80&w=2070&auto=format=fit=crop', 'https://images.unsplash.com/photo-1542295393-1b2a2b0d6e0a?q=80&w=1974&auto=format=fit=crop'], description: 'Un clásico atemporal. Hecho con cuero de plena flor y una hebilla de bronce macizo, este cinturón está diseñado para durar toda la vida y mejorar con el paso del tiempo.' },
-            { id: 2, name: 'Billetera de Cuero Genuino', price: 28500, category: 'billetera', images: ['https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg', 'https://images.unsplash.com/photo-1615393329869-68800273c33b?q=80&w=1974&auto=format=fit=crop'], description: 'Elegancia y funcionalidad en tu bolsillo. Con múltiples compartimentos para tarjetas y billetes, esta billetera está cosida a mano con hilo encerado para una máxima durabilidad.' },
+            { id: 1, name: 'Cinturón Clásico de Cuero', price: 5, category: 'cinturon', images: ['https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png','https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png' ], description: 'Un clásico atemporal. Hecho con cuero de plena flor y una hebilla de bronce macizo, este cinturón está diseñado para durar toda la vida y mejorar con el paso del tiempo.' },
+            { id: 2, name: 'Billetera de Cuero Genuino', price: 2, category: 'billetera', images: ['https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg', 'https://images.unsplash.com/photo-1615393329869-68800273c33b?q=80&w=1974&auto=format=fit=crop'], description: 'Elegancia y funcionalidad en tu bolsillo. Con múltiples compartimentos para tarjetas y billetes, esta billetera está cosida a mano con hilo encerado para una máxima durabilidad.' },
+            { id: 3, name: 'Set Matero Artesanal', price: 8, category: 'accesorio', images: ['https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg', 'https://images.unsplash.com/photo-1524580324424-444e197a94a2?q=80&w=1974&auto=format&fit=crop'], description: 'Un set matero completo forrado en cuero de la más alta calidad. Incluye mate, bombilla y yerbera. Ideal para acompañar tus mejores momentos y crear recuerdos.' },
         ];
         let cart = [];
 
         // --- SELECTORES DEL DOM ---
-        const body = document.body;
+        const body = document.body
         const pageHome = document.getElementById('page-home');
         const pageShop = document.getElementById('page-shop');
         const pageProduct = document.getElementById('page-product');
         const productDetailContent = document.getElementById('product-detail-content');
+        const header = document.getElementById('header');
         const headerContent = document.getElementById('header-content');
         const searchButton = document.getElementById('search-button');
         const menuPanel = document.getElementById('menu-panel');
@@ -236,48 +270,86 @@
         const categoryFilter = document.getElementById('category-filter');
         const sortFilter = document.getElementById('sort-filter');
         const noResults = document.getElementById('no-results');
+        const checkoutButton = document.getElementById('checkout-button');
+        const notification = document.getElementById('notification');
 
         // --- LÓGICA DE NAVEGACIÓN (SPA) ---
         const switchPage = (pageId, productId = null) => {
             const pages = { home: pageHome, shop: pageShop, product: pageProduct };
+            // Oculta todas las páginas
             Object.values(pages).forEach(p => p.classList.add('hidden'));
             
+            // Muestra la página actual
             const currentPage = pages[pageId];
-            currentPage.classList.remove('hidden');
+            if (currentPage) {
+                currentPage.classList.remove('hidden');
+            }
             
             const isHomePage = pageId === 'home';
             searchButton.classList.toggle('hidden', isHomePage);
 
+            // Aplica el estilo del header según la página
             if (isHomePage) {
                 handleHeaderScroll();
             } else {
+                header.classList.add('header-scrolled');
                 headerContent.classList.remove('text-white');
                 headerContent.classList.add('text-brand-brown');
             }
             
+            // Si es la página de producto, muestra los detalles
             if (pageId === 'product' && productId) {
                 displayProductDetail(productId);
             }
-
+            
+            // Siempre haz scroll al principio de la página al cambiar
             window.scrollTo(0, 0);
         };
+
+        // CORRECCIÓN: Se añade la función que faltaba
+        const handleHeaderScroll = () => {
+            if (pageHome.classList.contains('hidden')) return;
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+                headerContent.classList.remove('text-white');
+                headerContent.classList.add('text-brand-brown');
+            } else {
+                header.classList.remove('header-scrolled');
+                headerContent.classList.add('text-white');
+                headerContent.classList.remove('text-brand-brown');
+            }
+        };
+        window.addEventListener('scroll', handleHeaderScroll);
 
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                const page = e.target.dataset.page;
-                if (page) {
-                    switchPage(page);
-                    closePanel(menuPanel);
-                    if (e.target.hash) {
-                        setTimeout(() => { document.querySelector(e.target.hash)?.scrollIntoView(); }, 10);
+                const page = e.currentTarget.dataset.page;
+                const href = e.currentTarget.getAttribute('href');
+
+                // CORRECCIÓN: Lógica mejorada para manejar el scroll
+                if (page === 'home' && href && href.startsWith('#')) {
+                    if (pageHome.classList.contains('hidden')) {
+                        switchPage('home');
+                        setTimeout(() => {
+                            const targetElement = document.querySelector(href);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }, 100);
+                    } else {
+                        const targetElement = document.querySelector(href);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
                     }
+                } else if (page) {
+                    switchPage(page);
                 }
+                closePanel(menuPanel);
             });
         });
         
-        searchButton.addEventListener('click', () => { switchPage('shop'); searchInput.focus(); });
-
         // --- LÓGICA DE PANELES LATERALES ---
         const openPanel = (panel) => {
             panelBackdrop.classList.remove('hidden');
@@ -298,7 +370,14 @@
         document.getElementById('close-cart-button').addEventListener('click', () => closePanel(cartPanel));
         panelBackdrop.addEventListener('click', () => { closePanel(menuPanel); closePanel(cartPanel); });
         
-        // --- LÓGICA DEL CARRITO ---
+        // --- LÓGICA DEL CARRITO Y NOTIFICACIÓN ---
+        const showNotification = () => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        };
+
         const updateCart = () => {
              cartItemsContainer.innerHTML = '';
             let subtotal = 0;
@@ -333,6 +412,7 @@
 
         const addToCart = (productId, quantity = 1) => {
             const product = products.find(p => p.id === productId);
+            if(!product) return;
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
                 existingItem.quantity += quantity;
@@ -340,6 +420,7 @@
                 cart.push({ ...product, quantity });
             }
             updateCart();
+            showNotification();
         };
         
         cartItemsContainer.addEventListener('click', e => {
@@ -352,7 +433,7 @@
             if (target.classList.contains('quantity-change')) {
                 const change = parseInt(target.dataset.change);
                 cart[itemIndex].quantity += change;
-                if (cart[itemIndex].quantity === 0) cart.splice(itemIndex, 1);
+                if (cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1);
             } else if (target.classList.contains('remove-item')) {
                 cart.splice(itemIndex, 1);
             }
@@ -362,14 +443,9 @@
         // --- LÓGICA DE LA TIENDA Y VISTA DE PRODUCTO ---
         const displayProductDetail = (productId) => {
             const product = products.find(p => p.id === productId);
-            if (!product) {
-                switchPage('shop');
-                return;
-            }
+            if (!product) { switchPage('shop'); return; }
             
-            let thumbnailsHTML = product.images.map((img, index) => `
-                <img src="${img}" alt="Vista ${index+1} de ${product.name}" class="w-full h-20 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'}" data-index="${index}">
-            `).join('');
+            let thumbnailsHTML = product.images.map((img, index) => `<img src="${img}" alt="Vista ${index+1}" class="w-full h-20 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'}" data-index="${index}">`).join('');
 
             productDetailContent.innerHTML = `
                 <div class="text-sm text-gray-500 mb-4">
@@ -379,9 +455,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="flex flex-row-reverse md:flex-row gap-4">
-                        <div class="w-4/5">
-                            <img id="main-product-image" src="${product.images[0]}" alt="${product.name}" class="w-full h-auto object-cover rounded-lg shadow-lg">
-                        </div>
+                        <div class="w-4/5"><img id="main-product-image" src="${product.images[0]}" alt="${product.name}" class="w-full h-auto object-cover rounded-lg shadow-lg"></div>
                         <div class="w-1/5 flex flex-col gap-4">${thumbnailsHTML}</div>
                     </div>
                     <div>
@@ -389,50 +463,30 @@
                         <p class="text-3xl font-bold text-brand-brown my-4">$${product.price.toLocaleString('es-AR')}</p>
                         <p class="text-gray-600 leading-relaxed">${product.description}</p>
                         <div class="flex items-center gap-4 mt-8">
-                            <div class="flex items-center border rounded-lg">
-                                <button id="decrease-qty" class="px-4 py-2">-</button>
-                                <span id="product-qty" class="px-4 py-2">1</span>
-                                <button id="increase-qty" class="px-4 py-2">+</button>
-                            </div>
+                            <div class="flex items-center border rounded-lg"><button id="decrease-qty" class="px-4 py-2">-</button><span id="product-qty" class="px-4 py-2">1</span><button id="increase-qty" class="px-4 py-2">+</button></div>
                             <button id="add-to-cart-detail" class="flex-grow bg-brand-brown text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition">Agregar al Carrito</button>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
 
-            // Lógica para la galería de imágenes
             const mainImage = document.getElementById('main-product-image');
-            const thumbnails = productDetailContent.querySelectorAll('[data-index]');
-            thumbnails.forEach(thumb => {
+            productDetailContent.querySelectorAll('[data-index]').forEach(thumb => {
                 thumb.addEventListener('click', () => {
                     mainImage.src = thumb.src;
-                    thumbnails.forEach(t => t.classList.remove('thumbnail-active', 'border-transparent'));
+                    productDetailContent.querySelectorAll('[data-index]').forEach(t => t.classList.remove('thumbnail-active'));
                     thumb.classList.add('thumbnail-active');
                 });
             });
 
-            // Lógica para el selector de cantidad y botón de agregar
             const qtyEl = document.getElementById('product-qty');
-            document.getElementById('decrease-qty').addEventListener('click', () => {
-                let qty = parseInt(qtyEl.textContent);
-                if (qty > 1) qtyEl.textContent = qty - 1;
-            });
-            document.getElementById('increase-qty').addEventListener('click', () => {
-                let qty = parseInt(qtyEl.textContent);
-                qtyEl.textContent = qty + 1;
-            });
+            document.getElementById('decrease-qty').addEventListener('click', () => { let qty = parseInt(qtyEl.textContent); if (qty > 1) qtyEl.textContent = qty - 1; });
+            document.getElementById('increase-qty').addEventListener('click', () => { let qty = parseInt(qtyEl.textContent); qtyEl.textContent = qty + 1; });
             document.getElementById('add-to-cart-detail').addEventListener('click', () => {
-                const quantity = parseInt(qtyEl.textContent);
-                addToCart(product.id, quantity);
-                openPanel(cartPanel);
+                addToCart(product.id, parseInt(qtyEl.textContent));
             });
             
-            // Re-asigna eventos a los nuevos enlaces de navegación
             productDetailContent.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    switchPage(e.target.dataset.page);
-                });
+                link.addEventListener('click', (e) => { e.preventDefault(); switchPage(e.currentTarget.dataset.page); });
             });
         };
 
@@ -443,12 +497,7 @@
                 const productElement = document.createElement('div');
                 productElement.className = 'bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer';
                 productElement.dataset.id = product.id;
-                productElement.innerHTML = `
-                    <img src="${product.images[0]}" alt="${product.name}" class="w-full h-64 object-cover pointer-events-none">
-                    <div class="p-6 pointer-events-none">
-                        <h3 class="font-semibold text-lg text-brand-text">${product.name}</h3>
-                        <p class="mt-2 text-xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p>
-                    </div>`;
+                productElement.innerHTML = `<img src="${product.images[0]}" alt="${product.name}" class="w-full h-64 object-cover pointer-events-none"><div class="p-6 pointer-events-none"><h3 class="font-semibold text-lg text-brand-text">${product.name}</h3><p class="mt-2 text-xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p></div>`;
                 productGrid.appendChild(productElement);
                 productElement.addEventListener('click', () => {
                     switchPage('product', parseInt(productElement.dataset.id));
@@ -471,20 +520,6 @@
         searchInput.addEventListener('input', filterAndSortProducts);
         categoryFilter.addEventListener('change', filterAndSortProducts);
         sortFilter.addEventListener('change', filterAndSortProducts);
-
-        const handleHeaderScroll = () => {
-            if (pageHome.classList.contains('hidden')) return;
-            if (window.scrollY > 50) {
-                header.classList.add('header-scrolled');
-                headerContent.classList.remove('text-white');
-                headerContent.classList.add('text-brand-brown');
-            } else {
-                header.classList.remove('header-scrolled');
-                headerContent.classList.add('text-white');
-                headerContent.classList.remove('text-brand-brown');
-            }
-        };
-        window.addEventListener('scroll', handleHeaderScroll);
         
         const revealElements = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
@@ -494,6 +529,35 @@
         }, { threshold: 0.1 });
         revealElements.forEach(el => observer.observe(el));
         
+        // --- CONEXIÓN CON BACKEND ---
+        checkoutButton.addEventListener('click', async () => {
+            if (cart.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+            checkoutButton.disabled = true;
+            checkoutButton.textContent = 'Procesando...';
+            try {
+                const response = await fetch('http://localhost:3000/create-preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cart: cart })
+                });
+                const data = await response.json();
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    throw new Error('No se recibió el punto de inicio de pago.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al iniciar el proceso de pago. Por favor, intente de nuevo.');
+            } finally {
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Finalizar Compra';
+            }
+        });
+
         // --- INICIALIZACIÓN ---
         switchPage('home');
         filterAndSortProducts();
@@ -504,8 +568,7 @@
             mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26342.92634842583!2d-59.70882165!3d-34.7750165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bc917a43813849%3A0x55589e68f396f14b!2sSuipacha%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1724693489544!5m2!1ses-419!2sar" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>`;
         } catch (error) {
             console.error("Error al inicializar el mapa:", error);
-            const mapContainer = document.getElementById('map-container');
-            if(mapContainer) mapContainer.innerHTML = '<div class="bg-gray-200 h-full w-full flex items-center justify-center rounded-lg"><p class="text-gray-500">No se pudo cargar el mapa.</p></div>';
+            document.getElementById('map-container').innerHTML = '<div class="bg-gray-200 h-full w-full flex items-center justify-center rounded-lg"><p class="text-gray-500">No se pudo cargar el mapa.</p></div>';
         }
 
         lucide.createIcons();
@@ -513,3 +576,4 @@
     </script>
 </body>
 </html>
+
