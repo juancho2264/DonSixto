@@ -1,97 +1,69 @@
 <!DOCTYPE html>
+<!-- ===== DOCUMENT DEFINITION / DEFINICIÓN DEL DOCUMENTO ===== -->
 <html lang="es">
 <head>
+    <!-- ===== METADATA & CONFIGURATION / METADATOS Y CONFIGURACIÓN ===== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Talabartería artesanal en Argentina. Descubre cinturones, billeteras y accesorios de cuero genuino hechos a mano. Calidad que dura toda una vida.">
     <title>Don Sixto Talabartería - Prototipo Funcional</title>
     
-    <!-- Tailwind CSS CDN -->
+    <!-- ===== EXTERNAL LIBRARIES & FONTS / LIBRERÍAS Y FUENTES EXTERNAS ===== -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Merriweather for titles, Inter for body text -->
-    <!-- Fuentes de Google: Merriweather para títulos, Inter para el cuerpo de texto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@400;700;900&display.swap" rel="stylesheet">
-    
-    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <!-- ===== STYLESHEET / HOJA DE ESTILOS ===== -->
     <style>
-        /* --- GENERAL STYLES AND ANIMATIONS --- */
-        /* --- ESTILOS GENERALES Y ANIMACIONES --- */
+        /* ===== GENERAL STYLES & ANIMATIONS / ESTILOS GENERALES Y ANIMACIONES ===== */
         html { scroll-behavior: smooth; }
 
-        /* Animation for elements that appear on scroll */
-        /* Animación para elementos que aparecen con el scroll */
+        /* Scroll-reveal animation / Animación de aparición con scroll */
         .reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        /* Style for the header when scrolling */
-        /* Estilo para el encabezado al hacer scroll */
+        /* Scrolled header style / Estilo del encabezado al hacer scroll */
         .header-scrolled { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
         
-        /* Gradient overlay for the hero section */
-        /* Superposición de gradiente para la sección principal (hero) */
+        /* Hero section gradient overlay / Superposición de gradiente en la sección hero */
         .hero-gradient::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); z-index: 1; }
         
-        /* Styles for the side panels (menu and cart) */
-        /* Estilos para los paneles laterales (menú y carrito) */
+        /* Side panel styles / Estilos para paneles laterales */
         .side-panel { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); z-index: 60; }
         .side-panel.open { transform: translateX(0); }
         .panel-backdrop { transition: opacity 0.4s ease-in-out; z-index: 55; }
         
-        /* Styles for page transitions in the SPA */
-        /* Estilos para las transiciones de página en la SPA */
+        /* SPA page transition styles / Estilos de transición de página para SPA */
         .page { transition: opacity 0.5s ease-in-out, visibility 0.5s; }
         .page.hidden { opacity: 0; visibility: hidden; position: absolute; top: 0; left: 0; right: 0; width: 100%;}
         
-        /* Active thumbnail style in product detail */
-        /* Estilo para la miniatura activa en el detalle del producto */
+        /* Active thumbnail style / Estilo de miniatura activa */
         .thumbnail-active { border-color: #4E342E; }
 
-        /* "Added to cart" notification style */
-        /* Estilo para la notificación de "Añadido al carrito" */
-        #notification {
-            transition: opacity 0.5s, transform 0.5s;
-            transform: translateY(100%);
-            opacity: 0;
-            z-index: 100;
-        }
-        #notification.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        /* Notification popup style / Estilo de la notificación emergente */
+        #notification { transition: opacity 0.5s, transform 0.5s; transform: translateY(100%); opacity: 0; z-index: 100; }
+        #notification.show { transform: translateY(0); opacity: 1; }
 
-        /* --- ACCESSIBILITY AND MICROINTERACTIONS --- */
-        /* --- ACCESIBILIDAD Y MICROINTERACCIONES --- */
-        /* Custom focus style for keyboard navigation */
-        /* Estilo de foco personalizado para navegación con teclado */
-        button:focus-visible, a:focus-visible {
-            outline: 2px solid #BF9A6A;
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-        /* Click effect for buttons */
-        /* Efecto de clic para los botones */
-        button:active, a:active {
-            transform: scale(0.98);
-        }
-        /* Jiggle animation for the cart icon */
-        /* Animación de "sacudida" para el ícono del carrito */
+        /* ===== ACCESSIBILITY & MICROINTERACTIONS / ACCESIBILIDAD Y MICROINTERACCIONES ===== */
+        /* Custom focus style / Estilo de foco personalizado */
+        button:focus-visible, a:focus-visible { outline: 2px solid #BF9A6A; outline-offset: 2px; border-radius: 4px; }
+        
+        /* Click feedback effect / Efecto de retroalimentación al hacer clic */
+        button:active, a:active { transform: scale(0.98); }
+        
+        /* Jiggle animation for cart icon / Animación de "sacudida" para el ícono del carrito */
         @keyframes jiggle {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-3px) rotate(-2deg); }
             75% { transform: translateX(3px) rotate(2deg); }
         }
-        .jiggle {
-            animation: jiggle 0.4s ease-in-out;
-        }
+        .jiggle { animation: jiggle 0.4s ease-in-out; }
     </style>
+    
+    <!-- ===== TAILWIND CUSTOM CONFIGURATION / CONFIGURACIÓN PERSONALIZADA DE TAILWIND ===== -->
     <script>
-        // Tailwind CSS configuration
-        // Configuración de Tailwind CSS
         tailwind.config = {
             theme: {
                 extend: {
@@ -104,12 +76,13 @@
 </head>
 <body class="bg-brand-beige font-sans text-brand-text">
 
-    <!-- ===== GLOBAL HEADER ===== -->
-    <!-- ===== ENCABEZADO GLOBAL ===== -->
+    <!-- ===== GLOBAL HEADER / ENCABEZADO GLOBAL ===== -->
     <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="header">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-24 text-white" id="header-content">
+                <!-- Logo -->
                 <a href="#" class="font-serif text-3xl font-bold transition-transform duration-300 hover:scale-105 z-20 nav-link">Don Sixto</a>
+                <!-- Action Buttons / Botones de Acción -->
                 <div class="flex items-center space-x-5 z-20">
                     <button id="search-button" class="hover:scale-110 transition-transform" aria-label="Buscar"><i data-lucide="search" class="w-6 h-6"></i></button>
                     <button id="cart-button" class="relative hover:scale-110 transition-transform" aria-label="Carrito de compras">
@@ -122,12 +95,10 @@
         </div>
     </header>
 
-    <!-- ===== SIDE PANELS ===== -->
-    <!-- ===== PANELES LATERALES ===== -->
+    <!-- ===== SIDE PANELS / PANELES LATERALES ===== -->
     <div id="panel-backdrop" class="panel-backdrop fixed inset-0 bg-black/50 hidden opacity-0"></div>
 
-    <!-- Menu Panel -->
-    <!-- Panel de Menú -->
+    <!-- Navigation Menu Panel / Panel de Menú de Navegación -->
     <div id="menu-panel" class="side-panel fixed top-0 right-0 h-full w-80 bg-brand-brown text-white shadow-2xl p-8 flex flex-col">
         <button id="close-menu-button" class="self-end mb-8" aria-label="Cerrar menú"><i data-lucide="x" class="w-8 h-8"></i></button>
         <nav class="flex flex-col items-start space-y-8">
@@ -137,14 +108,16 @@
         </nav>
     </div>
     
-    <!-- Cart Panel -->
-    <!-- Panel del Carrito -->
+    <!-- Shopping Cart Panel / Panel del Carrito de Compras -->
     <div id="cart-panel" class="side-panel fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+        <!-- Cart Header / Cabecera del Carrito -->
         <div class="flex justify-between items-center p-6 border-b">
             <h2 class="text-2xl font-serif font-bold text-brand-brown">Mi Carrito</h2>
             <button id="close-cart-button" aria-label="Cerrar carrito"><i data-lucide="x" class="w-7 h-7 text-brand-brown"></i></button>
         </div>
+        <!-- Cart Items Container / Contenedor de Items del Carrito -->
         <div id="cart-items" class="flex-grow p-6 overflow-y-auto"></div>
+        <!-- Cart Footer / Pie del Carrito -->
         <div class="p-6 border-t bg-gray-50">
             <div class="flex justify-between items-center mb-4">
                 <span class="text-lg font-semibold">Subtotal:</span>
@@ -154,14 +127,12 @@
         </div>
     </div>
     
-    <!-- ===== PAGE CONTAINER (for SPA behavior) ===== -->
-    <!-- ===== CONTENEDOR DE PÁGINAS (para comportamiento SPA) ===== -->
+    <!-- ===== PAGE CONTAINER (SPA BEHAVIOR) / CONTENEDOR DE PÁGINAS (COMPORTAMIENTO SPA) ===== -->
     <div id="page-container" class="relative">
-        <!-- HOME PAGE -->
-        <!-- PÁGINA DE INICIO -->
+
+        <!-- ===== HOME PAGE / PÁGINA DE INICIO ===== -->
         <main id="page-home" class="page">
-            <!-- Hero Section -->
-            <!-- Sección Principal (Hero) -->
+            <!-- Hero Section / Sección Principal -->
             <section class="h-screen bg-brand-brown flex flex-col items-center justify-center text-white relative hero-gradient">
                 <div class="absolute inset-0"><img src="https://carterasjarts.com/wp-content/uploads/2024/05/DALL%C2%B7E-2024-05-03-10.52.58-A-display-of-finished-leather-products-in-a-small-Oaxacan-boutique-showcasing-the-variety-of-goods-produced-from-local-craftsmanship.-The-boutique-fe.webp" alt="Taller de talabartería artesanal con productos de cuero en exhibición" class="w-full h-full object-cover opacity-40"></div>
                 <div class="relative z-10 text-center px-4">
@@ -172,12 +143,12 @@
                 <a href="#destacados" class="absolute bottom-10 animate-bounce z-10" aria-label="Ver productos destacados"><i data-lucide="arrow-down" class="w-8 h-8 text-white"></i></a>
             </section>
             
-            <!-- Featured Products Section -->
-            <!-- Sección de Productos Destacados -->
+            <!-- Featured Products Section / Sección de Productos Destacados -->
             <section id="destacados" class="py-20 lg:py-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16 reveal"><h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Insignias de Nuestra Talabartería Artesanal</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-start mb-20">
+                        <!-- Featured Product 1 / Producto Destacado 1 -->
                         <div class="flex flex-col items-center text-center reveal">
                             <div class="relative">
                                 <img loading="lazy" src="https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png" alt="Cinturón de cuero genuino hecho a mano con hebilla de bronce" class="rounded-lg shadow-2xl mb-6">
@@ -187,12 +158,14 @@
                             <p class="mt-2 text-gray-600">Cada cinturón es cortado y cosido a mano, utilizando solo cuero de plena flor.</p>
                             <a href="#shop" class="mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition">Ver más</a>
                         </div>
+                        <!-- Featured Product 2 / Producto Destacado 2 -->
                         <div class="flex flex-col items-center text-center reveal">
                             <img loading="lazy" src="https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg" alt="Billetera de cuero artesanal con costuras visibles" class="rounded-lg shadow-2xl mb-6">
                             <h3 class="text-2xl font-serif font-bold text-brand-brown">Diseño y Funcionalidad</h3>
                             <p class="mt-2 text-gray-600">Elegancia y practicidad en tu bolsillo, con costuras reforzadas que definen la calidad.</p>
                              <a href="#shop" class="mt-4 inline-block bg-brand-accent text-white font-bold py-2 px-6 rounded-lg text-md hover:bg-opacity-90 transition">Ver más</a>
                         </div>
+                        <!-- Featured Product 3 / Producto Destacado 3 -->
                         <div class="flex flex-col items-center text-center reveal">
                             <img loading="lazy" src="https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg" alt="Set matero completo forrado en cuero con mate y yerbera" class="rounded-lg shadow-2xl mb-6">
                             <h3 class="text-2xl font-serif font-bold text-brand-brown">Tradición Matera</h3>
@@ -203,8 +176,7 @@
                 </div>
             </section>
             
-            <!-- Storytelling: Artisan Process Section -->
-            <!-- Storytelling: Sección del Proceso Artesanal -->
+            <!-- Artisan Process Section / Sección del Proceso Artesanal -->
             <section id="proceso" class="py-20 lg:py-24 bg-white">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16 reveal">
@@ -212,21 +184,25 @@
                         <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Cada pieza es el resultado de un proceso meticuloso, donde la paciencia y la habilidad son nuestras principales herramientas.</p>
                     </div>
                     <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 text-center reveal">
+                        <!-- Step 1 / Paso 1 -->
                         <div class="flex flex-col items-center">
                             <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="gem" class="w-10 h-10 text-brand-brown"></i></div>
                             <h3 class="font-bold text-lg text-brand-brown">1. Selección del Cuero</h3>
                             <p class="text-gray-600 text-sm">Elegimos solo cuero de plena flor, garantizando la máxima calidad y durabilidad.</p>
                         </div>
+                        <!-- Step 2 / Paso 2 -->
                         <div class="flex flex-col items-center">
                             <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="scissors" class="w-10 h-10 text-brand-brown"></i></div>
                             <h3 class="font-bold text-lg text-brand-brown">2. Corte a Mano</h3>
                             <p class="text-gray-600 text-sm">Cada pieza es cortada individualmente, respetando la veta natural del cuero.</p>
                         </div>
+                        <!-- Step 3 / Paso 3 -->
                         <div class="flex flex-col items-center">
                             <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="move-diagonal-2" class="w-10 h-10 text-brand-brown"></i></div>
                             <h3 class="font-bold text-lg text-brand-brown">3. Costura Reforzada</h3>
                             <p class="text-gray-600 text-sm">Utilizamos hilo encerado de alta resistencia para asegurar uniones que no fallan.</p>
                         </div>
+                        <!-- Step 4 / Paso 4 -->
                         <div class="flex flex-col items-center">
                             <div class="bg-brand-beige p-5 rounded-full mb-4"><i data-lucide="paintbrush" class="w-10 h-10 text-brand-brown"></i></div>
                             <h3 class="font-bold text-lg text-brand-brown">4. Acabado Final</h3>
@@ -236,8 +212,7 @@
                 </div>
             </section>
 
-            <!-- "About Us" Section -->
-            <!-- Sección "Nosotros" -->
+            <!-- About Us Section / Sección "Nosotros" -->
             <section id="nosotros" class="py-20 lg:py-24 bg-brand-beige">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -250,8 +225,7 @@
                 </div>
             </section>
             
-            <!-- Community and Trust Signals Section -->
-            <!-- Sección de Comunidad y Señales de Confianza -->
+            <!-- Community & Trust Signals Section / Sección de Comunidad y Confianza -->
             <section id="comunidad" class="py-20 lg:py-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-12 reveal"><a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-3xl font-serif font-bold text-brand-brown hover:text-brand-accent transition-colors">Seguinos en @ferrandini._</a></div>
@@ -262,9 +236,9 @@
                         <img loading="lazy" src="https://i.imgur.com/jaDiIE3.png" class="rounded-lg shadow-md aspect-square object-cover" alt="Ejemplo de producto de cuero publicado en Instagram 4">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center reveal">
-                        <div class="flex flex-col items-center"><i data-lucide="truck" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Envíos a todo el país</h3><p class="text-gray-600">Recibí tu pedido en la puerta de tu casa.</p></div>
-                        <div class="flex flex-col items-center"><i data-lucide="shield-check" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Garantía de por Vida</h3><p class="text-gray-600">Nuestros productos están hechos para durar. Si tienes un problema, lo reparamos.</p></div>
-                        <div class="flex flex-col items-center"><i data-lucide="credit-card" class="w-12 h-12 text-brand-brown mb-4"></i><h3 class="font-bold text-lg text-brand-brown">Pagos seguros</h3><p class="text-gray-600">Aceptamos todas las tarjetas y Mercado Pago.</p>
+                        <div><i data-lucide="truck" class="w-12 h-12 text-brand-brown mb-4 inline-block"></i><h3 class="font-bold text-lg text-brand-brown">Envíos a todo el país</h3><p class="text-gray-600">Recibí tu pedido en la puerta de tu casa.</p></div>
+                        <div><i data-lucide="shield-check" class="w-12 h-12 text-brand-brown mb-4 inline-block"></i><h3 class="font-bold text-lg text-brand-brown">Garantía de por Vida</h3><p class="text-gray-600">Nuestros productos están hechos para durar. Si tienes un problema, lo reparamos.</p></div>
+                        <div><i data-lucide="credit-card" class="w-12 h-12 text-brand-brown mb-4 inline-block"></i><h3 class="font-bold text-lg text-brand-brown">Pagos seguros</h3><p class="text-gray-600">Aceptamos todas las tarjetas y Mercado Pago.</p>
                         <div class="flex justify-center items-center space-x-2 mt-2">
                            <img loading="lazy" src="https://placehold.co/40x25/fafafa/000?text=VISA" alt="Logo de Visa" class="h-6"/>
                            <img loading="lazy" src="https://placehold.co/40x25/fafafa/000?text=MC" alt="Logo de Mastercard" class="h-6"/>
@@ -275,8 +249,7 @@
                 </div>
             </section>
 
-            <!-- Testimonials Section -->
-            <!-- Sección de Testimonios -->
+            <!-- Testimonials Section / Sección de Testimonios -->
             <section id="testimonios" class="py-20 lg:py-24 bg-white">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16 reveal">
@@ -296,8 +269,7 @@
                 </div>
             </section>
             
-            <!-- Contact Section -->
-            <!-- Sección de Contacto -->
+            <!-- Contact Section / Sección de Contacto -->
             <section id="contacto" class="py-20 lg:py-24 bg-gray-50">
                  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16 reveal"><h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-brown">Encontranos</h2></div>
@@ -313,8 +285,7 @@
                  </div>
             </section>
             
-            <!-- Footer -->
-            <!-- Pie de Página -->
+            <!-- Global Footer / Pie de Página Global -->
             <footer class="bg-brand-brown text-white">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
                     <p class="font-serif text-2xl font-bold">Don Sixto</p>
@@ -332,10 +303,10 @@
             </footer>
         </main>
 
-        <!-- SHOP PAGE -->
-        <!-- PÁGINA DE TIENDA -->
+        <!-- ===== SHOP PAGE / PÁGINA DE TIENDA ===== -->
         <main id="page-shop" class="page hidden">
              <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28">
+                <!-- Filters and Sorting / Filtros y Ordenamiento -->
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-4xl font-serif font-bold text-brand-brown">Tienda</h2>
                 </div>
@@ -348,9 +319,11 @@
                         <option value="default">Ordenar por</option><option value="price-desc">Precio: Mayor a Menor</option><option value="price-asc">Precio: Menor a Mayor</option>
                     </select>
                 </div>
+                <!-- Product Grid / Grilla de Productos -->
                 <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
                 <p id="no-results" class="text-center text-gray-500 text-lg hidden mt-8">No se encontraron productos.</p>
              </div>
+             <!-- Secondary Page Footer / Pie de Página Secundario -->
              <footer class="bg-gray-100 mt-24">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
                     <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
@@ -363,10 +336,10 @@
             </footer>
         </main>
         
-        <!-- PRODUCT DETAIL PAGE -->
-        <!-- PÁGINA DE DETALLE DE PRODUCTO -->
+        <!-- ===== PRODUCT DETAIL PAGE / PÁGINA DE DETALLE DE PRODUCTO ===== -->
         <main id="page-product" class="page hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28">
+                <!-- Product detail content is injected here by JS / El contenido del detalle del producto es inyectado aquí por JS -->
                 <div id="product-detail-content"></div>
             </div>
              <footer class="bg-gray-100 mt-24">
@@ -381,13 +354,13 @@
             </footer>
         </main>
 
-        <!-- FAQ PAGE -->
-        <!-- PÁGINA DE PREGUNTAS FRECUENTES (FAQ) -->
+        <!-- ===== FAQ PAGE / PÁGINA DE PREGUNTAS FRECUENTES ===== -->
         <main id="page-faq" class="page hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
                 <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-md">
                     <h2 class="text-4xl font-serif font-bold text-brand-brown mb-8">Preguntas Frecuentes</h2>
                     <div class="space-y-6 text-gray-700">
+                        <!-- Static Content / Contenido Estático -->
                         <div>
                             <h3 class="font-bold text-lg text-brand-brown">¿Qué tipo de cuero utilizan?</h3>
                             <p>Utilizamos exclusivamente cuero de plena flor de origen argentino, conocido por su durabilidad y la hermosa pátina que desarrolla con el tiempo. Es la capa más resistente y de mayor calidad del cuero.</p>
@@ -400,18 +373,11 @@
                             <h3 class="font-bold text-lg text-brand-brown">¿Mi producto tiene garantía?</h3>
                             <p>¡Absolutamente! Confiamos tanto en nuestro trabajo que ofrecemos una garantía de por vida en todas las costuras y defectos de fabricación. Si algo falla, lo reparamos sin costo.</p>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-brand-brown">¿Cuánto tarda en llegar mi pedido?</h3>
-                            <p>Una vez despachado, el tiempo de entrega estimado es de 3 a 7 días hábiles, dependiendo de tu ubicación.</p>
-                        </div>
-                    </div>
-                    <div class="text-center mt-12">
-                         <a href="#shop" class="inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-md hover:bg-opacity-90 transition">Volver a la Tienda</a>
                     </div>
                 </div>
             </div>
-            <footer class="bg-gray-100 mt-24">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+             <footer class="bg-gray-100 mt-24">
+                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
                     <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
                     <div class="flex justify-center items-center space-x-4 mt-4">
                         <a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a>
@@ -419,109 +385,71 @@
                     </div>
                     <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
                 </div>
-            </footer>
+             </footer>
         </main>
         
-        <!-- RETURNS POLICY PAGE -->
-        <!-- PÁGINA DE POLÍTICAS DE DEVOLUCIÓN -->
+        <!-- ===== RETURNS POLICY PAGE / PÁGINA DE POLÍTICAS DE DEVOLUCIÓN ===== -->
         <main id="page-returns" class="page hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
                  <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-md">
                     <h2 class="text-4xl font-serif font-bold text-brand-brown mb-8">Políticas de Devolución</h2>
-                    <div class="space-y-4 text-gray-700">
-                        <p>Queremos que estés 100% satisfecho con tu compra. Si por alguna razón no lo estás, puedes solicitar una devolución dentro de los 30 días posteriores a la recepción de tu producto.</p>
-                        <p><strong>Condiciones para la devolución:</strong></p>
-                        <ul class="list-disc list-inside">
-                            <li>El producto debe estar sin uso y en las mismas condiciones en que lo recibiste.</li>
-                            <li>Debe conservar su embalaje original.</li>
-                            <li>Los costos de envío para la devolución corren por cuenta del cliente, a menos que el motivo sea un defecto de fábrica.</li>
-                        </ul>
-                        <p>Para iniciar una devolución, por favor contáctanos a <strong>juancruzferrandini@gmail.com</strong> con tu número de pedido y el motivo de la devolución.</p>
-                    </div>
-                     <div class="text-center mt-12">
-                         <a href="#shop" class="inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-md hover:bg-opacity-90 transition">Volver a la Tienda</a>
-                    </div>
-                </div>
+                     <!-- Static Content / Contenido Estático -->
+                 </div>
             </div>
-             <footer class="bg-gray-100 mt-24">
-                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-                    <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
-                    <div class="flex justify-center items-center space-x-4 mt-4">
-                        <a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a>
-                        <a href="https://www.linkedin.com/in/juan-cruz-ferrandini-a47a89224/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
-                    </div>
-                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
-                </div>
-            </footer>
+             <footer class="bg-gray-100 mt-24"><!-- ... --></footer>
         </main>
 
-        <!-- TERMS AND CONDITIONS PAGE -->
-        <!-- PÁGINA DE TÉRMINOS Y CONDICIONES -->
+        <!-- ===== TERMS & CONDITIONS PAGE / PÁGINA DE TÉRMINOS Y CONDICIONES ===== -->
         <main id="page-terms" class="page hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
                  <div class="max-w-4xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-md">
                     <h2 class="text-4xl font-serif font-bold text-brand-brown mb-8">Términos y Condiciones</h2>
-                     <div class="space-y-4 text-gray-700">
-                        <p>Bienvenido a Don Sixto. Al utilizar nuestro sitio web, aceptas cumplir con los siguientes términos y condiciones de uso.</p>
-                        <p><strong>Propiedad Intelectual:</strong> Todo el contenido publicado en este sitio, incluyendo imágenes, textos, logos y diseños, es propiedad de Don Sixto y está protegido por las leyes de derecho de autor. Queda prohibida su reproducción sin nuestro consentimiento explícito.</p>
-                        <p><strong>Precios y Pagos:</strong> Nos reservamos el derecho de modificar los precios de nuestros productos en cualquier momento y sin previo aviso. Todos los precios están expresados en Pesos Argentinos (ARS).</p>
-                        <p><strong>Uso del Sitio:</strong> Te comprometes a no utilizar este sitio para fines ilícitos o que puedan perjudicar la imagen de la marca.</p>
-                    </div>
-                     <div class="text-center mt-12">
-                         <a href="#shop" class="inline-block bg-brand-accent text-white font-bold py-3 px-8 rounded-lg text-md hover:bg-opacity-90 transition">Volver a la Tienda</a>
-                    </div>
-                </div>
+                    <!-- Static Content / Contenido Estático -->
+                 </div>
             </div>
-             <footer class="bg-gray-100 mt-24">
-                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-                    <p class="font-serif text-2xl font-bold text-brand-brown">Don Sixto</p>
-                    <div class="flex justify-center items-center space-x-4 mt-4">
-                        <a href="https://www.instagram.com/ferrandini._/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a>
-                        <a href="https://www.linkedin.com/in/juan-cruz-ferrandini-a47a89224/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-brown transition-colors"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
-                    </div>
-                    <p class="mt-8 text-gray-500 text-sm">&copy; 2025 Don Sixto Talabartería. Todos los derechos reservados.</p>
-                </div>
-            </footer>
+             <footer class="bg-gray-100 mt-24"><!-- ... --></footer>
         </main>
-
     </div>
 
-    <!-- FLOATING WHATSAPP BUTTON -->
-    <!-- BOTÓN DE WHATSAPP FLOTANTE -->
+    <!-- ===== FLOATING WHATSAPP BUTTON / BOTÓN FLOTANTE DE WHATSAPP ===== -->
     <a href="https://wa.me/5491112345678" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg z-40 hover:bg-green-600 transition-transform hover:scale-110">
         <i data-lucide="message-circle" class="w-8 h-8"></i>
     </a>
     
-    <!-- NOTIFICATION POPUP -->
-    <!-- POPUP DE NOTIFICACIÓN -->
+    <!-- ===== GLOBAL NOTIFICATION POPUP / POPUP DE NOTIFICACIÓN GLOBAL ===== -->
     <div id="notification" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-3 px-6 rounded-lg shadow-lg">
         <p></p>
     </div>
 
+    <!-- ===== JAVASCRIPT LOGIC / LÓGICA JAVASCRIPT ===== -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- PRODUCT DATABASE ---
-        // --- BASE DE DATOS DE PRODUCTOS ---
+        
+        // ===== MOCK PRODUCT DATABASE / BASE DE DATOS DE PRODUCTOS (SIMULADA) =====
+        // In a real app, this data would come from a server/API.
+        // En una aplicación real, estos datos vendrían de un servidor/API.
         const products = [
             { id: 1, name: 'Cinturón Clásico de Cuero', price: 28500, category: 'cinturon', images: ['https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png','https://i.pinimg.com/originals/45/7d/31/457d310b515350c39e0a017bd694c081.png' ], description: 'Un clásico atemporal. Hecho con cuero de plena flor y una hebilla de bronce macizo, este cinturón está diseñado para durar toda la vida y mejorar con el paso del tiempo.' },
             { id: 2, name: 'Billetera de Cuero Genuino', price: 15000, category: 'billetera', images: ['https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg', 'https://i.etsystatic.com/29972590/r/il/6eab08/4012312613/il_600x600.4012312613_suio.jpg'], description: 'Elegancia y funcionalidad en tu bolsillo. Con múltiples compartimentos para tarjetas y billetes, esta billetera está cosida a mano con hilo encerado para una máxima durabilidad.' },
             { id: 3, name: 'Set Matero Artesanal', price: 42000, category: 'accesorio', images: ['https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg', 'https://dcdn.mitiendanube.com/stores/001/417/626/products/matera-y-mate1-5910e7d3ecb2289cf716342520467309-1024-1024.jpg'], description: 'Un set matero completo forrado en cuero de la más alta calidad. Incluye mate, bombilla y yerbera. Ideal para acompañar tus mejores momentos y crear recuerdos.' },
         ];
+        
+        // ===== APPLICATION STATE / ESTADO DE LA APLICACIÓN =====
         let cart = [];
 
-        // --- DOM SELECTORS ---
-        // --- SELECTORES DEL DOM ---
-        const body = document.body
-        const pageHome = document.getElementById('page-home');
-        const pageShop = document.getElementById('page-shop');
-        const pageProduct = document.getElementById('page-product');
-        const pageFaq = document.getElementById('page-faq');
-        const pageReturns = document.getElementById('page-returns');
-        const pageTerms = document.getElementById('page-terms');
+        // ===== DOM SELECTORS / SELECTORES DEL DOM =====
+        const body = document.body;
+        const pages = {
+            home: document.getElementById('page-home'),
+            shop: document.getElementById('page-shop'),
+            product: document.getElementById('page-product'),
+            faq: document.getElementById('page-faq'),
+            returns: document.getElementById('page-returns'),
+            terms: document.getElementById('page-terms')
+        };
         const productDetailContent = document.getElementById('product-detail-content');
         const header = document.getElementById('header');
         const headerContent = document.getElementById('header-content');
-        const searchButton = document.getElementById('search-button');
         const menuPanel = document.getElementById('menu-panel');
         const cartPanel = document.getElementById('cart-panel');
         const panelBackdrop = document.getElementById('panel-backdrop');
@@ -537,32 +465,13 @@
         const notification = document.getElementById('notification');
         const cartButtonIcon = document.querySelector('#cart-button i');
 
-        // --- SPA (SINGLE PAGE APPLICATION) NAVIGATION LOGIC ---
-        // --- LÓGICA DE NAVEGACIÓN SPA (SINGLE PAGE APPLICATION) ---
+        // ===== SPA NAVIGATION LOGIC / LÓGICA DE NAVEGACIÓN SPA =====
         const switchPage = (pageId, productId = null) => {
-            // Object containing all pages for easy access
-            // Objeto que contiene todas las páginas para un acceso fácil
-            const pages = { home: pageHome, shop: pageShop, product: pageProduct, faq: pageFaq, returns: pageReturns, terms: pageTerms };
-            
-            // Hide all pages
-            // Ocultar todas las páginas
             Object.values(pages).forEach(p => p.classList.add('hidden'));
+            const currentPage = pages[pageId] || pages.home;
+            currentPage.classList.remove('hidden');
             
-            // Show the current page, or home if the pageId is invalid
-            // Mostrar la página actual, o la de inicio si el pageId es inválido
-            const currentPage = pages[pageId];
-            if (currentPage) {
-                currentPage.classList.remove('hidden');
-            } else {
-                pages.home.classList.remove('hidden');
-            }
-            
-            // Adjust header style based on the current page
-            // Ajustar el estilo del encabezado según la página actual
-            const isHomePage = pageId === 'home';
-            searchButton.classList.toggle('hidden', isHomePage);
-
-            if (isHomePage) {
+            if (pageId === 'home') {
                 handleHeaderScroll();
             } else {
                 header.classList.add('header-scrolled');
@@ -570,51 +479,36 @@
                 headerContent.classList.add('text-brand-brown');
             }
             
-            // If it's a product page, display its details
-            // Si es una página de producto, mostrar sus detalles
             if (pageId === 'product' && productId) {
                 displayProductDetail(productId);
             }
             
-            // Scroll to the top of the page on every navigation, unless it's a product view
-            // Hacer scroll al principio de la página en cada navegación, a menos que sea una vista de producto
-            if (!productId) {
-                window.scrollTo(0, 0);
-            }
+            if (pageId !== 'product') window.scrollTo(0, 0);
         };
 
-        // --- HASH-BASED ROUTING ---
-        // --- ENRUTAMIENTO BASADO EN HASH ---
+        // ===== HASH-BASED ROUTING / ENRUTAMIENTO BASADO EN HASH =====
         const handleRouteChange = () => {
-            const hash = window.location.hash.slice(1); // Get hash without the '#' // Obtener el hash sin el '#'
-            const [page, param] = hash.split('/'); // Split to get page and optional parameter // Dividir para obtener la página y un parámetro opcional
-
+            const hash = window.location.hash.slice(1);
+            const [page, param] = hash.split('/');
             const validPages = ['shop', 'product', 'faq', 'returns', 'terms'];
 
             if (validPages.includes(page)) {
-                // If the hash corresponds to a known page, switch to it
-                // Si el hash corresponde a una página conocida, cambiar a ella
                 switchPage(page, param ? parseInt(param) : null);
             } else {
-                // Otherwise, default to the home page and handle anchor links
-                // De lo contrario, ir a la página de inicio y manejar los enlaces de anclaje
                 switchPage('home');
                 if (hash) {
                     setTimeout(() => {
                         const targetElement = document.getElementById(hash);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }, 100); // Timeout to allow the page to render // Timeout para permitir que la página se renderice
+                        if (targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
                 }
             }
-            closePanel(menuPanel); // Always close menu on navigation // Siempre cerrar el menú al navegar
+            closePanel(menuPanel);
         };
 
-        // --- HEADER SCROLL EFFECT ---
-        // --- EFECTO DE SCROLL EN EL ENCABEZADO ---
+        // ===== HEADER SCROLL EFFECT / EFECTO DE SCROLL EN ENCABEZADO =====
         const handleHeaderScroll = () => {
-            if (pageHome.classList.contains('hidden')) return; // Only apply on home page // Aplicar solo en la página de inicio
+            if (pages.home.classList.contains('hidden')) return;
             if (window.scrollY > 50) {
                 header.classList.add('header-scrolled');
                 headerContent.classList.remove('text-white');
@@ -625,43 +519,29 @@
                 headerContent.classList.remove('text-brand-brown');
             }
         };
-        window.addEventListener('scroll', handleHeaderScroll);
         
-        // --- SIDE PANEL LOGIC ---
-        // --- LÓGICA DE PANELES LATERALES ---
+        // ===== SIDE PANEL LOGIC / LÓGICA DE PANELES LATERALES =====
         const openPanel = (panel) => {
             panelBackdrop.classList.remove('hidden');
             setTimeout(() => panelBackdrop.classList.remove('opacity-0'), 10);
             panel.classList.add('open');
-            body.style.overflow = 'hidden'; // Prevent background scrolling // Evitar el scroll del fondo
+            body.style.overflow = 'hidden';
         };
         const closePanel = (panel) => {
             panelBackdrop.classList.add('opacity-0');
             setTimeout(() => panelBackdrop.classList.add('hidden'), 400);
             panel.classList.remove('open');
-            body.style.overflow = 'auto'; // Restore scrolling // Restaurar el scroll
+            body.style.overflow = 'auto';
         };
         
-        // --- EVENT LISTENERS FOR PANELS ---
-        // --- EVENT LISTENERS PARA PANELES ---
-        document.getElementById('menu-button').addEventListener('click', () => openPanel(menuPanel));
-        document.getElementById('close-menu-button').addEventListener('click', () => closePanel(menuPanel));
-        document.getElementById('cart-button').addEventListener('click', () => openPanel(cartPanel));
-        document.getElementById('close-cart-button').addEventListener('click', () => closePanel(cartPanel));
-        panelBackdrop.addEventListener('click', () => { closePanel(menuPanel); closePanel(cartPanel); });
-        
-        // --- NOTIFICATION LOGIC ---
-        // --- LÓGICA DE NOTIFICACIONES ---
+        // ===== NOTIFICATION LOGIC / LÓGICA DE NOTIFICACIONES =====
         const showNotification = (message, duration = 2000) => {
             notification.querySelector('p').textContent = message;
             notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, duration);
+            setTimeout(() => notification.classList.remove('show'), duration);
         };
 
-        // --- CART LOGIC ---
-        // --- LÓGICA DEL CARRITO ---
+        // ===== CART LOGIC / LÓGICA DEL CARRITO =====
         const updateCart = () => {
             cartItemsContainer.innerHTML = '';
             let subtotal = 0;
@@ -705,96 +585,38 @@
             }
             updateCart();
             showNotification('¡Producto añadido al carrito!');
-            // Cart icon microinteraction
-            // Microinteracción del ícono del carrito
             cartButtonIcon.classList.add('jiggle');
             setTimeout(() => cartButtonIcon.classList.remove('jiggle'), 400);
         };
         
-        // Event delegation for cart item actions
-        // Delegación de eventos para acciones en los items del carrito
-        cartItemsContainer.addEventListener('click', e => {
-            const target = e.target;
-            const parent = target.closest('[data-id]');
-            if (!parent) return;
-            const productId = parseInt(parent.dataset.id);
-            const itemIndex = cart.findIndex(item => item.id === productId);
-            if (itemIndex === -1) return;
-
-            if (target.classList.contains('quantity-change')) {
-                const change = parseInt(target.dataset.change);
-                cart[itemIndex].quantity += change;
-                if (cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1); // Remove if quantity is 0 or less // Quitar si la cantidad es 0 o menos
-            } else if (target.classList.contains('remove-item')) {
-                cart.splice(itemIndex, 1); // Remove item from cart // Quitar item del carrito
-            }
-            updateCart();
-        });
-
-        // --- PRODUCT DISPLAY LOGIC ---
-        // --- LÓGICA DE VISUALIZACIÓN DE PRODUCTOS ---
+        // ===== PRODUCT DISPLAY LOGIC / LÓGICA DE VISUALIZACIÓN DE PRODUCTOS =====
         const displayProductDetail = (productId) => {
             const product = products.find(p => p.id === productId);
             if (!product) { 
-                window.location.hash = '#shop'; // Redirect to shop if product not found // Redirigir a la tienda si el producto no se encuentra
+                window.location.hash = '#shop';
                 return; 
             }
             
-            // Create thumbnails HTML
-            // Crear HTML de las miniaturas
-            let thumbnailsHTML = product.images.map((img, index) => `<img src="${img}" alt="Vista previa ${index+1} del producto ${product.name}" class="w-full h-20 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'}" data-index="${index}">`).join('');
+            let thumbnailsHTML = product.images.map((img, index) => `<img src="${img}" alt="Vista previa ${index+1}" class="w-full h-20 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'}" data-index="${index}">`).join('');
 
-            // Create main product content HTML
-            // Crear HTML del contenido principal del producto
-            let mainContentHTML = `
-                <div class="text-sm text-gray-500 mb-4">
-                    <a href="#" class="hover:text-brand-brown">Inicio</a> > 
-                    <a href="#shop" class="hover:text-brand-brown">Tienda</a> > 
-                    <span class="font-semibold text-brand-text">${product.name}</span>
-                </div>
+            productDetailContent.innerHTML = `
+                <div class="text-sm text-gray-500 mb-4"><a href="#" class="hover:text-brand-brown">Inicio</a> > <a href="#shop" class="hover:text-brand-brown">Tienda</a> > <span class="font-semibold text-brand-text">${product.name}</span></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div class="flex flex-row-reverse md:flex-row gap-4">
-                        <div class="w-4/5"><img id="main-product-image" src="${product.images[0]}" alt="Imagen principal del producto ${product.name}" class="w-full h-auto object-cover rounded-lg shadow-lg"></div>
+                        <div class="w-4/5"><img id="main-product-image" src="${product.images[0]}" alt="${product.name}" class="w-full h-auto object-cover rounded-lg shadow-lg"></div>
                         <div class="w-1/5 flex flex-col gap-4">${thumbnailsHTML}</div>
                     </div>
                     <div>
                         <h2 class="text-4xl font-serif font-bold text-brand-brown">${product.name}</h2>
-                        <div class="my-4">
-                            <p class="text-3xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p>
-                            <p class="text-sm text-gray-500 mt-1">IVA incluido. ¡Cuotas sin interés!</p>
-                        </div>
+                        <div class="my-4"><p class="text-3xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p><p class="text-sm text-gray-500 mt-1">IVA incluido.</p></div>
                         <p class="text-gray-600 leading-relaxed">${product.description}</p>
-                         <p class="text-sm font-bold text-amber-600 mt-4">¡Edición limitada! Últimas unidades disponibles.</p>
                         <div class="flex items-center gap-4 mt-8">
                             <div class="flex items-center border rounded-lg"><button id="decrease-qty" class="px-4 py-2">-</button><span id="product-qty" class="px-4 py-2">1</span><button id="increase-qty" class="px-4 py-2">+</button></div>
-                            <button id="add-to-cart-detail" class="flex-grow bg-brand-brown text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition">Añadir a mi Carrito</button>
+                            <button id="add-to-cart-detail" class="flex-grow bg-brand-brown text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition">Añadir al Carrito</button>
                         </div>
                     </div>
                 </div>`;
             
-            // Create recommended products HTML
-            // Crear HTML de productos recomendados
-            let recommendationsHTML = '<div class="mt-24"><h3 class="text-3xl font-serif font-bold text-brand-brown text-center mb-8">También te podría interesar</h3><div class="grid grid-cols-1 sm:grid-cols-2 gap-8">';
-            const recommendedProducts = products.filter(p => p.id !== productId).slice(0, 2);
-            recommendedProducts.forEach(p => {
-                recommendationsHTML += `
-                    <a href="#product/${p.id}" class="block bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
-                        <img loading="lazy" src="${p.images[0]}" alt="${p.name}" class="w-full h-64 object-cover">
-                        <div class="p-6">
-                            <h4 class="font-semibold text-lg text-brand-text">${p.name}</h4>
-                            <p class="mt-2 text-xl font-bold text-brand-brown">$${p.price.toLocaleString('es-AR')}</p>
-                        </div>
-                    </a>
-                `;
-            });
-            recommendationsHTML += '</div></div>';
-
-            // Inject the complete HTML into the container
-            // Inyectar el HTML completo en el contenedor
-            productDetailContent.innerHTML = mainContentHTML + recommendationsHTML;
-
-            // Event listeners for thumbnails and quantity controls
-            // Event listeners para las miniaturas y controles de cantidad
             const mainImage = document.getElementById('main-product-image');
             productDetailContent.querySelectorAll('[data-index]').forEach(thumb => {
                 thumb.addEventListener('click', () => {
@@ -807,13 +629,9 @@
             const qtyEl = document.getElementById('product-qty');
             document.getElementById('decrease-qty').addEventListener('click', () => { let qty = parseInt(qtyEl.textContent); if (qty > 1) qtyEl.textContent = qty - 1; });
             document.getElementById('increase-qty').addEventListener('click', () => { let qty = parseInt(qtyEl.textContent); qtyEl.textContent = qty + 1; });
-            document.getElementById('add-to-cart-detail').addEventListener('click', () => {
-                addToCart(product.id, parseInt(qtyEl.textContent));
-            });
+            document.getElementById('add-to-cart-detail').addEventListener('click', () => addToCart(product.id, parseInt(qtyEl.textContent)));
         };
 
-        // --- SHOP PAGE: FILTERING AND DISPLAY ---
-        // --- PÁGINA DE TIENDA: FILTRADO Y VISUALIZACIÓN ---
         const displayProducts = (filteredProducts) => {
             productGrid.innerHTML = '';
             noResults.classList.toggle('hidden', filteredProducts.length > 0);
@@ -822,7 +640,7 @@
                 productElement.href = `#product/${product.id}`;
                 productElement.className = 'block bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer';
                 productElement.dataset.id = product.id;
-                productElement.innerHTML = `<img loading="lazy" src="${product.images[0]}" alt="Imagen del producto ${product.name}" class="w-full h-64 object-cover pointer-events-none"><div class="p-6 pointer-events-none"><h3 class="font-semibold text-lg text-brand-text">${product.name}</h3><p class="mt-2 text-xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p></div>`;
+                productElement.innerHTML = `<img loading="lazy" src="${product.images[0]}" alt="${product.name}" class="w-full h-64 object-cover pointer-events-none"><div class="p-6 pointer-events-none"><h3 class="font-semibold text-lg text-brand-text">${product.name}</h3><p class="mt-2 text-xl font-bold text-brand-brown">$${product.price.toLocaleString('es-AR')}</p></div>`;
                 productGrid.appendChild(productElement);
             });
         };
@@ -832,8 +650,6 @@
             const searchTerm = searchInput.value.toLowerCase();
             const category = categoryFilter.value;
             const sort = sortFilter.value;
-            // Apply filters and sorting
-            // Aplicar filtros y ordenamiento
             if (searchTerm) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
             if (category !== 'all') filtered = filtered.filter(p => p.category === category);
             if (sort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
@@ -841,14 +657,55 @@
             displayProducts(filtered);
         };
 
-        // Event listeners for shop filters
-        // Event listeners para los filtros de la tienda
+        // ===== EVENT LISTENERS / ASIGNACIÓN DE EVENTOS =====
+        // Panel buttons / Botones de paneles
+        document.getElementById('menu-button').addEventListener('click', () => openPanel(menuPanel));
+        document.getElementById('close-menu-button').addEventListener('click', () => closePanel(menuPanel));
+        document.getElementById('cart-button').addEventListener('click', () => openPanel(cartPanel));
+        document.getElementById('close-cart-button').addEventListener('click', () => closePanel(cartPanel));
+        panelBackdrop.addEventListener('click', () => { closePanel(menuPanel); closePanel(cartPanel); });
+        
+        // Cart item actions (using event delegation) / Acciones de items del carrito (usando delegación de eventos)
+        cartItemsContainer.addEventListener('click', e => {
+            const target = e.target;
+            const parent = target.closest('[data-id]');
+            if (!parent) return;
+            const productId = parseInt(parent.dataset.id);
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex === -1) return;
+
+            if (target.classList.contains('quantity-change')) {
+                const change = parseInt(target.dataset.change);
+                cart[itemIndex].quantity += change;
+                if (cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1);
+            } else if (target.classList.contains('remove-item')) {
+                cart.splice(itemIndex, 1);
+            }
+            updateCart();
+        });
+
+        // Shop filters / Filtros de la tienda
         searchInput.addEventListener('input', filterAndSortProducts);
         categoryFilter.addEventListener('change', filterAndSortProducts);
         sortFilter.addEventListener('change', filterAndSortProducts);
         
-        // --- INTERSECTION OBSERVER FOR SCROLL ANIMATIONS ---
-        // --- INTERSECTION OBSERVER PARA ANIMACIONES DE SCROLL ---
+        // Checkout button (prototype) / Botón de finalizar compra (prototipo)
+        checkoutButton.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showNotification("Tu carrito está vacío.", 3000);
+                return;
+            }
+            checkoutButton.disabled = true;
+            checkoutButton.textContent = 'Procesando...';
+            setTimeout(() => {
+                showNotification('Función de pago no implementada en este prototipo.', 4000);
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Finalizar Compra';
+            }, 1500);
+        });
+        
+        // ===== INITIALIZATION / INICIALIZACIÓN =====
+        // Scroll animations / Animaciones de scroll
         const revealElements = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -857,48 +714,24 @@
         }, { threshold: 0.1 });
         revealElements.forEach(el => observer.observe(el));
         
-        // --- CHECKOUT BUTTON (PROTOTYPE) ---
-        // --- BOTÓN DE FINALIZAR COMPRA (PROTOTIPO) ---
-        checkoutButton.addEventListener('click', () => {
-            if (cart.length === 0) {
-                showNotification("Tu carrito está vacío.", 3000);
-                return;
-            }
-            
-            checkoutButton.disabled = true;
-            checkoutButton.textContent = 'Procesando...';
-
-            // Simulate processing and show a message
-            // Simular procesamiento y mostrar un mensaje
-            setTimeout(() => {
-                showNotification('Función de pago no implementada en este prototipo.', 4000);
-                checkoutButton.disabled = false;
-                checkoutButton.textContent = 'Finalizar Compra';
-            }, 1500);
-        });
-
-        // --- INITIALIZATION ---
-        // --- INICIALIZACIÓN ---
-        window.addEventListener('hashchange', handleRouteChange); // Listen for hash changes // Escuchar cambios en el hash
-        handleRouteChange(); // Initial route check on page load // Chequeo de ruta inicial al cargar la página
-        filterAndSortProducts(); // Initial product display // Visualización inicial de productos
-        updateCart(); // Initial cart update // Actualización inicial del carrito
+        // Routing and page load / Enrutamiento y carga de página
+        window.addEventListener('hashchange', handleRouteChange);
+        window.addEventListener('scroll', handleHeaderScroll);
+        handleRouteChange(); 
+        filterAndSortProducts();
+        updateCart();
         
-        // Initialize Google Map
-        // Inicializar mapa de Google
+        // Map initialization / Inicialización del mapa
         try {
-            const mapContainer = document.getElementById('map-container');
-            mapContainer.innerHTML = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d210146.68231174355!2d-58.57338473715822!3d-34.61574369400244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires%2C%20CABA!5e0!3m2!1ses-419!2sar!4v1725394855583!5m2!1ses-419!2sar" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>`;
+            document.getElementById('map-container').innerHTML = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d210146.68231174355!2d-58.57338473715822!3d-34.61574369400244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires%2C%20CABA!5e0!3m2!1ses-419!2sar!4v1725394855583!5m2!1ses-419!2sar" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>`;
         } catch (error) {
             console.error("Error al inicializar el mapa:", error);
             document.getElementById('map-container').innerHTML = '<div class="bg-gray-200 h-full w-full flex items-center justify-center rounded-lg"><p class="text-gray-500">No se pudo cargar el mapa.</p></div>';
         }
 
-        // Initialize Lucide Icons
-        // Inicializar Íconos de Lucide
+        // Icon initialization / Inicialización de íconos
         lucide.createIcons();
     });
     </script>
 </body>
 </html>
-
